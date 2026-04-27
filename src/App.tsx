@@ -9,6 +9,7 @@ import { PageEspacial } from './components/pages/PageEspacial'
 import { PageMercado } from './components/pages/PageMercado'
 import { PageExplorer } from './components/pages/PageExplorer'
 import { MethodologyBanner } from './components/MethodologyBanner'
+import { IntroAnimation } from './components/IntroAnimation'
 
 const pageVariants = {
   initial: (dir: number) => ({
@@ -112,6 +113,12 @@ function Dashboard() {
 }
 
 export default function App() {
+  const [introComplete, setIntroComplete] = useState(false)
+
+  if (!introComplete) {
+    return <IntroAnimation onComplete={() => setIntroComplete(true)} />
+  }
+
   return (
     <FilterProvider>
       <Dashboard />
