@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
 interface Props {
   data: { mes: number; label: string; total: number }[]
@@ -15,7 +15,8 @@ export function Sazonalidade({ data }: Props) {
           formatter={(v) => [Number(v).toLocaleString('pt-BR'), 'Transações']}
           contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #E8E6DF' }}
         />
-        <Bar dataKey="total" fill="#4A7C6F" radius={[4, 4, 0, 0]} />
+        <Legend wrapperStyle={{ fontSize: '11px', fontFamily: 'var(--f-body)', color: '#6E6E6B', paddingTop: '4px' }} />
+        <Bar dataKey="total" name="Transações" fill="#4A7C6F" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )

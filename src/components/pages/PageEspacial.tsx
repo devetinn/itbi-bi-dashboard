@@ -3,6 +3,7 @@ import { KPICard } from '../ui/KPICard'
 import { ChartCard } from '../ui/ChartCard'
 import { RankingBairros } from '../charts/RankingBairros'
 import { ValorM2Bairros } from '../charts/ValorM2Bairros'
+import { ParetoChart } from '../charts/ParetoChart'
 import { formatBRL } from '../../utils/formatters'
 
 const stagger = {
@@ -19,26 +20,36 @@ interface Props {
   }
   rankingBairros: { bairro: string; total: number; valorMedio: number }[]
   valorM2Bairros: { bairro: string; valorMedio: number }[]
+  paretoData: { bairro: string; total: number; pctAcum: number }[]
 }
 
-export function PageEspacial({ kpis, rankingBairros, valorM2Bairros }: Props) {
+export function PageEspacial({ kpis, rankingBairros, valorM2Bairros, paretoData }: Props) {
   return (
     <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <KPICard label="Bairros Registrados" value={kpis.totalBairros} icon="🏘️" sublabel="Bairros com transações" />
-        <KPICard label="Top Bairro — Volume" value={kpis.topBairroTransacoes.bairro || '-'} icon="🏆" sublabel={`${kpis.topBairroTransacoes.total.toLocaleString('pt-BR')} transações`} />
-        <KPICard label="Top Bairro — Valor/m²" value={kpis.topBairroM2.bairro || '-'} icon="💎" sublabel={formatBRL(kpis.topBairroM2.valorMedio)} />
-        <KPICard label="Concentração" value={`${kpis.count80Bairros} bairros`} sublabel="= 80% do valor total" highlighted />
+        <KPICard label="Bairros com Transações" value={kpis.totalBairros} sublabel="Abrangência geográfica registrada" variant="petrol" />
+        <KPICard label="Maior Volume Transacional" value={kpis.topBairroTransacoes.bairro || '-'} sublabel={`${kpis.topBairroTransacoes.total.toLocaleString('pt-BR')} transações registradas`} variant="orange" highlighted />
+        <KPICard label="Maior Valor Unitário (R$/m²)" value={kpis.topBairroM2.bairro || '-'} sublabel={formatBRL(kpis.topBairroM2.valorMedio)} variant="teal" />
+        <KPICard label="Concentração 80/20" value={`${kpis.count80Bairros} bairros`} sublabel="respondem por 80% das transações" variant="cyan" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ChartCard title="Ranking de Bairros" subtitle="Top 15 por transações">
+        <ChartCard title="Volume de Transações por Bairro" subtitle="15 bairros mais ativos — clique para filtrar" accentColor="#325565">
           <RankingBairros data={rankingBairros} />
         </ChartCard>
-        <ChartCard title="Valor por m²" subtitle="Top 20 por valor médio">
+        <ChartCard title="Valor Médio Declarado por m²" subtitle="20 bairros com maior valorização unitária" accentColor="#009889">
           <ValorM2Bairros data={valorM2Bairros} />
         </ChartCard>
       </div>
+
+      {/* Análise de Pareto — chart de largura total */}
+      <ChartCard
+        title="Análise de Pareto — Concentração por Bairro"
+        subtitle={`Quantos bairros concentram 80% das transações? (top 40 de ${paretoData.length} bairros)`}
+        accentColor="#F15A22"
+      >
+        <ParetoChart data={paretoData} />
+      </ChartCard>
     </motion.div>
   )
 }

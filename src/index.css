@@ -1,13 +1,103 @@
 @import "tailwindcss";
 
-* {
-  font-family: 'Inter', sans-serif;
+/* ═══════════════════════════════════════════════════════════════
+   PMF DESIGN SYSTEM TOKENS — ITBI Fortaleza Dashboard
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Palette ─────────────────────────────────────────────────── */
+  --c-bg:           #FAFAF7;
+  --c-surface:      #FFFFFF;
+
+  /* Ink / text scale */
+  --c-ink:          #1A1A1A;
+  --c-ink-2:        #414042;
+  --c-ink-3:        #6E6E6B;
+  --c-ink-4:        #9A9A95;
+
+  /* Lines / borders */
+  --c-line:         #E7E4DC;
+  --c-line-2:       #D8D4C9;
+
+  /* Orange — primary accent, CTAs, highlights */
+  --c-orange:       #F15A22;
+  --c-orange-50:    #FEEFE7;
+  --c-orange-700:   #C04617;
+
+  /* Teal — positive / success */
+  --c-teal:         #009889;
+  --c-teal-50:      #E2F4F0;
+  --c-teal-700:     #00746A;
+
+  /* Petrol — structural (sidebar, nav, headers) */
+  --c-petrol:       #325565;
+  --c-petrol-50:    #E8EEF1;
+  --c-petrol-900:   #1F3845;
+
+  /* Cyan — informational */
+  --c-cyan:         #00A0DC;
+  --c-cyan-50:      #E1F2FB;
+  --c-cyan-700:     #007AAB;
+
+  /* Cream / warm */
+  --c-cream:        #FFE6CB;
+
+  /* ── Typography ──────────────────────────────────────────────── */
+  --f-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --f-body:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --f-mono:    'JetBrains Mono', ui-monospace, Menlo, monospace;
+
+  /* ── Elevation / shadows ─────────────────────────────────────── */
+  --sh-1: 0 1px 2px rgba(20,20,20,.05), 0 1px 1px rgba(20,20,20,.03);
+  --sh-2: 0 6px 16px rgba(20,20,20,.06), 0 2px 4px rgba(20,20,20,.04);
+  --sh-3: 0 18px 40px rgba(20,20,20,.10), 0 6px 12px rgba(20,20,20,.05);
+
+  /* ── Border radius ───────────────────────────────────────────── */
+  --r-1: 4px;
+  --r-2: 8px;
+  --r-3: 14px;
+  --r-4: 22px;
+
+  /* ── Spacing ─────────────────────────────────────────────────── */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  96px;
+
+  /* ── Transitions ─────────────────────────────────────────────── */
+  --t-fast:   150ms ease;
+  --t-base:   200ms ease;
+  --t-slow:   350ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --t-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-bounce: 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE RESET
+   ═══════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 body {
-  background-color: #F0EFEA;
-  color: #1A1A1A;
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 400;
+  background-color: var(--c-bg);
+  color: var(--c-ink);
   margin: 0;
   padding: 0;
 }
@@ -18,17 +108,151 @@ body {
   display: flex;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ═══════════════════════════════════════════════════════════════
+   KEYFRAME ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
 }
-::-webkit-scrollbar-track {
-  background: #F0EFEA;
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-::-webkit-scrollbar-thumb {
-  background: #C5C5C0;
-  border-radius: 3px;
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #8A8A8A;
+
+@keyframes barRise {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+@keyframes barPulse {
+  0%, 100% { transform: scaleY(.4); }
+  50%       { transform: scaleY(1); }
+}
+
+@keyframes ripple {
+  to { transform: scale(4); opacity: 0; }
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(241, 90, 34, 0); }
+  50%       { box-shadow: 0 0 0 6px rgba(241, 90, 34, 0.12); }
+}
+
+@keyframes draw-line {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes toastIn {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--c-line)   25%,
+    #F5F3EE         50%,
+    var(--c-line)   75%
+  );
+  background-size: 400px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--r-2);
+}
+
+/* Panel / card base */
+.panel {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-3);
+  padding: var(--s-5);
+  transition: transform var(--t-base), box-shadow var(--t-base);
+}
+
+.panel:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sh-2);
+}
+
+/* Focus ring */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--c-orange);
+  outline-offset: 2px;
+  border-radius: var(--r-2);
+}
+
+/* Glass surface */
+.glass {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RECHARTS CUSTOM STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+.recharts-tooltip-wrapper {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: var(--c-line);
+  stroke-opacity: 0.7;
+}
+
+.recharts-line-curve,
+.recharts-area-curve {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 0;
+  animation: draw-line 1.2s ease-out forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar          { width: 5px; height: 5px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--c-line-2); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--c-ink-4); }
+
+/* ═══════════════════════════════════════════════════════════════
+   SELECTION
+   ═══════════════════════════════════════════════════════════════ */
+
+::selection {
+  background: var(--c-orange-50);
+  color: var(--c-orange-700);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  :root {
+    --s-5: 20px;
+  }
 }

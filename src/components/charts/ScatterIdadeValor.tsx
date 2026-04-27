@@ -1,4 +1,4 @@
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { formatBRL } from '../../utils/formatters'
 
 interface Props {
@@ -19,13 +19,14 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: { payl
 
 export function ScatterIdadeValor({ data }: Props) {
   return (
-    <ResponsiveContainer width="100%" height={260}>
-      <ScatterChart margin={{ top: 4, right: 4, left: -10, bottom: 0 }}>
+    <ResponsiveContainer width="100%" height={280}>
+      <ScatterChart margin={{ top: 10, right: 20, left: 20, bottom: 20 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#F0EFEA" />
         <XAxis dataKey="x" name="Idade" type="number" tick={{ fontSize: 10, fill: '#8A8A8A' }} tickLine={false} axisLine={false} label={{ value: 'Idade (anos)', position: 'insideBottom', offset: -2, fontSize: 10, fill: '#8A8A8A' }} />
         <YAxis dataKey="y" name="Valor/m²" type="number" tick={{ fontSize: 10, fill: '#8A8A8A' }} tickLine={false} axisLine={false} tickFormatter={(v) => formatBRL(v)} />
         <Tooltip content={<CustomTooltip />} />
-        <Scatter data={data} fill="#4A7C6F" fillOpacity={0.6} />
+        <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+        <Scatter data={data} name="Transação" fill="#4A7C6F" fillOpacity={0.6} />
       </ScatterChart>
     </ResponsiveContainer>
   )

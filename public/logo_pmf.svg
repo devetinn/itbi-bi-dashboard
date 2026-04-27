@@ -1,0 +1,31 @@
+<html lang="pt-br" dir="ltr" xml:lang="pt-br" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+     <link media="all" type="text/css" rel="stylesheet" href="https://catalogodeservicos.fortaleza.ce.gov.br/assets/css/login.css">
+
+</head>
+<body>
+	<div class="main-container">
+		<div id="content" class="content-container">
+			<section class="view-container animate-fade-up">
+				<div class="page-signin">
+
+					<div class="signin-header">
+						<section class="logo text-center">
+							<figure>
+								<img src="/assets/imagens/logo-plataforma.png" alt="Prefeitura de Fortaleza">
+							</figure>
+						</section>
+					</div>
+
+					<div class="signin-body">
+						<div class="container">
+							<div class="logo text-center">
+								<img src="/assets/imagens/404_.png"/>		
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+</body>

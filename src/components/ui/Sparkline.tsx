@@ -2,29 +2,31 @@ import { ResponsiveContainer, Area, AreaChart } from 'recharts'
 
 interface SparklineProps {
   data: number[]
+  color?: string
   highlighted?: boolean
 }
 
-export function Sparkline({ data, highlighted }: SparklineProps) {
+export function Sparkline({ data, color = '#F15A22', highlighted }: SparklineProps) {
   const chartData = data.map((v, i) => ({ i, v }))
-  const color = highlighted ? '#ffffff' : '#4A7C6F'
+  const strokeColor = highlighted ? '#ffffff' : color
+  const gradId = `sg-${strokeColor.replace('#', '')}`
 
   return (
-    <div className="w-full h-12 mt-2">
+    <div className="w-full h-10">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData}>
           <defs>
-            <linearGradient id={`sg-${highlighted ? 'h' : 'n'}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={color} stopOpacity={0.15} />
-              <stop offset="95%" stopColor={color} stopOpacity={0} />
+            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%"  stopColor={strokeColor} stopOpacity={0.18} />
+              <stop offset="95%" stopColor={strokeColor} stopOpacity={0} />
             </linearGradient>
           </defs>
           <Area
             type="monotone"
             dataKey="v"
-            stroke={color}
+            stroke={strokeColor}
             strokeWidth={1.5}
-            fill={`url(#sg-${highlighted ? 'h' : 'n'})`}
+            fill={`url(#${gradId})`}
             dot={false}
             isAnimationActive={false}
           />

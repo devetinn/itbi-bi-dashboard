@@ -1,84 +1,242 @@
+import { motion, AnimatePresence } from 'framer-motion'
+import type { ReactNode } from 'react'
+import { DataSourceBadge } from '../DataSourceBadge'
+
 interface SidebarProps {
   activePage: string
   onNavigate: (page: string) => void
-  totalRegistros: string
   mobileOpen: boolean
   onMobileClose: () => void
 }
 
-const navItems = [
-  { id: 'temporal', label: 'Temporal', icon: '📈' },
-  { id: 'espacial', label: 'Espacial', icon: '🗺️' },
-  { id: 'mercado', label: 'Mercado', icon: '🏘️' },
-  { id: 'explorer', label: 'Explorer', icon: '🔍' },
+interface NavItem { id: string; label: string; icon: ReactNode }
+
+const navItems: NavItem[] = [
+  {
+    id: 'temporal',
+    label: 'Temporal',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <polyline points="1,12 5,7 8,9 12,4 15,6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <line x1="1" y1="14" x2="15" y2="14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    id: 'espacial',
+    label: 'Espacial',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1.5C5.5 1.5 3.5 3.5 3.5 6C3.5 9.5 8 14.5 8 14.5C8 14.5 12.5 9.5 12.5 6C12.5 3.5 10.5 1.5 8 1.5Z" stroke="currentColor" strokeWidth="1.4"/>
+        <circle cx="8" cy="6" r="1.5" stroke="currentColor" strokeWidth="1.4"/>
+      </svg>
+    ),
+  },
+  {
+    id: 'mercado',
+    label: 'Mercado',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="2" y="5" width="12" height="9" rx="1" stroke="currentColor" strokeWidth="1.4"/>
+        <path d="M5 14V10h6v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+        <path d="M2 5l6-3.5L14 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    id: 'explorer',
+    label: 'Explorer',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="6.5" cy="6.5" r="4" stroke="currentColor" strokeWidth="1.4"/>
+        <path d="M10 10L14 14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
 ]
 
-export function Sidebar({ activePage, onNavigate, totalRegistros, mobileOpen, onMobileClose }: SidebarProps) {
+const navItemVariants = {
+  hidden: { opacity: 0, x: -12 },
+  show: (i: number) => ({
+    opacity: 1, x: 0,
+    transition: { delay: 0.1 + i * 0.06, duration: 0.3, ease: 'easeOut' as const },
+  }),
+}
+
+export function Sidebar({
+  activePage, onNavigate, mobileOpen, onMobileClose,
+}: SidebarProps) {
   return (
     <>
       {/* Mobile overlay */}
-      {mobileOpen && (
-        <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={onMobileClose} />
-      )}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/50 z-20 md:hidden backdrop-blur-sm"
+            onClick={onMobileClose}
+          />
+        )}
+      </AnimatePresence>
 
-      <aside
-        className={`fixed md:relative z-30 md:z-auto inset-y-0 left-0 w-[220px] flex-shrink-0 bg-[#2A2A2A] flex flex-col transition-transform duration-300 ${
+      <motion.aside
+        initial={false}
+        className={`fixed md:relative z-30 md:z-auto inset-y-0 left-0 w-[220px] flex-shrink-0 flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
+        style={{ background: '#1F3845' }}
       >
-        {/* Logo */}
-        <div className="px-4 pt-5 pb-2">
+        {/* Logo area */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05, duration: 0.4 }}
+          className="px-4 pt-5 pb-3"
+        >
           <div className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-              style={{ background: 'linear-gradient(135deg, #4A7C6F, #2D6A5F)' }}
+            <motion.div
+              whileHover={{ rotate: [0, -8, 8, 0], scale: 1.08 }}
+              transition={{ duration: 0.5 }}
+              className="w-10 h-10 flex-shrink-0 bg-white rounded-md flex items-center justify-center overflow-hidden"
+              style={{ boxShadow: '0 4px 10px rgba(0,0,0,0.15)' }}
             >
-              I
-            </div>
+              <img 
+                src="/logo.png" 
+                alt="Logo Prefeitura" 
+                className="w-full h-full object-contain p-1"
+                onError={(e) => { e.currentTarget.src = '/logo_pmf.svg' }}
+              />
+            </motion.div>
             <div>
-              <div className="text-white font-semibold text-base leading-tight">ITBI</div>
-              <div className="text-[#8A8A8A] text-xs">Fortaleza</div>
+              <div
+                className="text-white font-bold text-base leading-tight"
+                style={{ fontFamily: 'var(--f-display)', letterSpacing: '-0.01em' }}
+              >
+                ITBI
+              </div>
+              <div
+                className="text-[11px] tracking-wide"
+                style={{ color: 'rgba(255,255,255,0.38)' }}
+              >
+                Fortaleza
+              </div>
             </div>
           </div>
-          <div className="h-px bg-[#3A3A3A] mt-4" />
-        </div>
+          <div className="h-px mt-4" style={{ background: 'rgba(255,255,255,0.07)' }} />
+        </motion.div>
 
-        {/* Nav */}
+        {/* Navigation */}
         <nav className="flex-1 px-3 py-2">
-          <div className="text-[10px] uppercase tracking-widest text-[#555] mb-2 px-3">Análise</div>
-          {navItems.map((item) => {
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
+            className="text-[9px] uppercase mb-2 px-3 font-semibold"
+            style={{
+              fontFamily: 'var(--f-display)',
+              letterSpacing: '.15em',
+              color: 'rgba(255,255,255,0.28)',
+            }}
+          >
+            Análise
+          </motion.div>
+
+          {navItems.map((item, i) => {
             const active = activePage === item.id
             return (
-              <button
+              <motion.div
                 key={item.id}
-                onClick={() => { onNavigate(item.id); onMobileClose() }}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium mb-1 transition-all duration-150 text-left ${
-                  active
-                    ? 'bg-[#4A7C6F] text-white'
-                    : 'text-[#8A8A8A] hover:bg-[#333] hover:text-white'
-                }`}
+                custom={i}
+                variants={navItemVariants}
+                initial="hidden"
+                animate="show"
+                className="relative mb-0.5"
               >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
+                {/* Animated active background */}
+                <AnimatePresence>
+                  {active && (
+                    <motion.div
+                      layoutId="nav-active-bg"
+                      className="absolute inset-0 rounded-lg"
+                      style={{ background: 'rgba(241,90,34,0.18)' }}
+                      initial={{ opacity: 0, scale: 0.92 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.92 }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                    />
+                  )}
+                </AnimatePresence>
+
+                <motion.button
+                  onClick={() => { onNavigate(item.id); onMobileClose() }}
+                  whileTap={{ scale: 0.97 }}
+                  className="relative z-10 w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors duration-150"
+                  style={{
+                    fontFamily: 'var(--f-body)',
+                    color: active ? '#FFFFFF' : 'rgba(255,255,255,0.48)',
+                  }}
+                  onMouseEnter={e => {
+                    if (!active) e.currentTarget.style.color = 'rgba(255,255,255,0.78)'
+                  }}
+                  onMouseLeave={e => {
+                    if (!active) e.currentTarget.style.color = 'rgba(255,255,255,0.48)'
+                  }}
+                >
+                  <motion.span
+                    animate={active ? { scale: [1, 1.15, 1] } : {}}
+                    transition={{ duration: 0.3 }}
+                    className="flex-shrink-0"
+                  >
+                    {item.icon}
+                  </motion.span>
+                  <span className="tracking-tight">{item.label}</span>
+
+                  {/* Active indicator */}
+                  {active && (
+                    <motion.span
+                      layoutId="nav-dot"
+                      className="ml-auto w-1.5 h-1.5 rounded-full"
+                      style={{ background: '#F15A22' }}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                    />
+                  )}
+                </motion.button>
+              </motion.div>
             )
           })}
         </nav>
 
         {/* Footer */}
-        <div className="px-4 pb-5">
-          <div className="h-px bg-[#3A3A3A] mb-3" />
-          <div className="flex items-center gap-1.5 mb-1">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35, duration: 0.4 }}
+          className="px-4 pb-5"
+        >
+          <div className="h-px mb-3" style={{ background: 'rgba(255,255,255,0.07)' }} />
+
+          {/* Live indicator */}
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="relative flex h-2 w-2 flex-shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: '#009889' }} />
+              <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: '#009889' }} />
             </span>
-            <span className="text-xs text-[#8A8A8A]">Ao vivo</span>
+            <span
+              className="text-[11px] font-medium"
+              style={{ fontFamily: 'var(--f-body)', color: 'rgba(255,255,255,0.42)' }}
+            >
+              Ao vivo
+            </span>
           </div>
-          <div className="text-xs text-[#555]">{totalRegistros} registros</div>
-          <div className="text-xs text-[#555]">Fonte: SEFIN · Fortaleza</div>
-        </div>
-      </aside>
+
+          <DataSourceBadge />
+        </motion.div>
+      </motion.aside>
     </>
   )
 }

@@ -1,18 +1,26 @@
 import { AnimatePresence } from 'framer-motion'
 import { FilterChip } from '../ui/FilterChip'
 import { useFilterContext } from '../../context/FilterContext'
+import { FAIXA_LABELS } from '../../utils/filterHelpers'
 
 export function ActiveFilterChips() {
-  const { filters, toggleBairro, toggleFaixa, toggleTipo, clearFilters, activeCount, hasActiveFilters } = useFilterContext()
+  const {
+    filters, toggleBairro, toggleFaixa, toggleTipo,
+    togglePadrao, toggleAno, activeCount, hasActiveFilters,
+  } = useFilterContext()
 
   const allChips = [
     ...filters.bairros.map((b) => ({ label: b, onRemove: () => toggleBairro(b) })),
-    ...filters.faixasValor.map((f) => ({ label: f, onRemove: () => toggleFaixa(f) })),
-    ...filters.tiposUso.map((t) => ({ label: t, onRemove: () => toggleTipo(t) })),
+    ...filters.faixasValor.map((f) => ({ label: FAIXA_LABELS[f] ?? f, onRemove: () => toggleFaixa(f) })),
+    ...filters.tiposUso.map((t) => ({ label: t.charAt(0) + t.slice(1).toLowerCase(), onRemove: () => toggleTipo(t) })),
+    ...filters.padraosConstrucao.map((p) => ({ label: p, onRemove: () => togglePadrao(p) })),
+    ...filters.anos.map((a) => ({ label: String(a), onRemove: () => toggleAno(a) })),
   ]
 
-  const visible = allChips.slice(0, 2)
+  const visible = allChips.slice(0, 3)
   const extra = activeCount - visible.length
+
+  if (!hasActiveFilters) return null
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
@@ -22,15 +30,12 @@ export function ActiveFilterChips() {
         ))}
       </AnimatePresence>
       {extra > 0 && (
-        <span className="text-xs text-[#8A8A8A] font-medium">+{extra} mais</span>
-      )}
-      {hasActiveFilters && (
-        <button
-          onClick={clearFilters}
-          className="text-xs text-[#4A7C6F] underline hover:text-[#2D6A5F] transition-colors"
+        <span
+          className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+          style={{ background: '#E8EEF1', color: '#325565', fontFamily: 'var(--f-display)' }}
         >
-          Limpar
-        </button>
+          +{extra}
+        </span>
       )}
     </div>
   )

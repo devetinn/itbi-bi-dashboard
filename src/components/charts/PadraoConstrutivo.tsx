@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts'
 
 interface Props {
   data: { padrao: string; total: number }[]
@@ -14,16 +14,18 @@ function getColor(index: number, total: number): string {
 
 export function PadraoConstrutivo({ data }: Props) {
   return (
-    <ResponsiveContainer width="100%" height={220}>
-      <BarChart data={data} margin={{ top: 4, right: 4, left: -10, bottom: 0 }}>
+    <ResponsiveContainer width="100%" height={260}>
+      <BarChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 25 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#F0EFEA" />
-        <XAxis dataKey="padrao" tick={{ fontSize: 10, fill: '#8A8A8A' }} tickLine={false} axisLine={false} />
+        <XAxis dataKey="padrao" tick={{ fontSize: 10, fill: '#8A8A8A' }} tickLine={false} axisLine={false} interval={0} angle={-35} textAnchor="end" />
         <YAxis tick={{ fontSize: 10, fill: '#8A8A8A' }} tickLine={false} axisLine={false} />
         <Tooltip
           formatter={(v) => [Number(v).toLocaleString('pt-BR'), 'Transações']}
+          labelFormatter={(label) => `Padrão: ${label}`}
           contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #E8E6DF' }}
         />
-        <Bar dataKey="total" radius={[4, 4, 0, 0]}>
+        <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+        <Bar dataKey="total" name="Quantidade" radius={[4, 4, 0, 0]}>
           {data.map((_, i) => (
             <Cell key={i} fill={getColor(i, data.length)} />
           ))}

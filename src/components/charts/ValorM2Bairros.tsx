@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts'
 import { useFilterContext } from '../../context/FilterContext'
 import { formatBRL } from '../../utils/formatters'
 
@@ -23,7 +23,8 @@ export function ValorM2Bairros({ data }: Props) {
           formatter={(v) => [formatBRL(Number(v)), 'Valor médio/m²']}
           contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #E8E6DF' }}
         />
-        <Bar dataKey="valorMedio" radius={[0, 4, 4, 0]} cursor="pointer" onClick={(d) => toggleBairro((d as unknown as BairroM2Data).bairro)}>
+        <Legend wrapperStyle={{ fontSize: '11px', fontFamily: 'var(--f-body)', color: '#6E6E6B', paddingTop: '4px' }} />
+        <Bar dataKey="valorMedio" name="Valor médio/m²" radius={[0, 4, 4, 0]} cursor="pointer" onClick={(d) => toggleBairro((d as unknown as BairroM2Data).bairro)}>
           {data.map((entry) => {
             const selected = filters.bairros.includes(entry.bairro)
             const hasFilter = filters.bairros.length > 0
