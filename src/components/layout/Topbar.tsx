@@ -9,7 +9,6 @@ const PAGE_TITLES: Record<string, string> = {
   espacial: 'Análise Espacial',
   mercado:  'Análise de Mercado',
   explorer: 'Explorer',
-  processo: 'Processo.',
 }
 
 interface TopbarProps {

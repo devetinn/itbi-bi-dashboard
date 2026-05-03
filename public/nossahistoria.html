@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Processo. — Como o Dashboard ITBI foi Construído</title>
+  <meta name="description" content="O processo completo de construção do Dashboard ITBI Fortaleza: da coleta de dados ao deploy, passando pelo ETL em Python, design system e stack técnica." />
+
+  <!-- Fonts — PMF Design System -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══ PMF Design Tokens ═══════════════════════════════════════ */
+    :root {
+      --c-bg:          #FAFAF7;
+      --c-surface:     #FFFFFF;
+      --c-ink:         #1A1A1A;
+      --c-ink-2:       #414042;
+      --c-ink-3:       #6E6E6B;
+      --c-ink-4:       #9A9A95;
+      --c-line:        #E7E4DC;
+      --c-line-2:      #D8D4C9;
+      --c-orange:      #F15A22;
+      --c-orange-50:   #FEEFE7;
+      --c-orange-700:  #C04617;
+      --c-teal:        #009889;
+      --c-teal-50:     #E2F4F0;
+      --c-teal-700:    #00746A;
+      --c-petrol:      #325565;
+      --c-petrol-50:   #E8EEF1;
+      --c-petrol-900:  #1F3845;
+      --c-cyan:        #00A0DC;
+      --c-cyan-50:     #E1F2FB;
+      --c-cyan-700:    #007AAB;
+      --c-cream:       #FFE6CB;
+      --f-display:     'Archivo', 'Helvetica Neue', Arial, sans-serif;
+      --f-body:        'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+      --f-mono:        'JetBrains Mono', ui-monospace, Menlo, monospace;
+      --sh-1: 0 1px 2px rgba(20,20,20,.05), 0 1px 1px rgba(20,20,20,.03);
+      --sh-2: 0 6px 16px rgba(20,20,20,.06), 0 2px 4px rgba(20,20,20,.04);
+      --sh-3: 0 18px 40px rgba(20,20,20,.10), 0 6px 12px rgba(20,20,20,.05);
+      --r-1: 4px; --r-2: 8px; --r-3: 14px; --r-4: 22px;
+    }
+
+    /* ═══ Reset ════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+    body {
+      font-family: var(--f-body);
+      font-size: 15px;
+      line-height: 1.6;
+      background: var(--c-bg);
+      color: var(--c-ink);
+    }
+    a { color: var(--c-orange); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      font-family: var(--f-mono);
+      font-size: .85em;
+      background: #F0EFEA;
+      padding: 2px 6px;
+      border-radius: var(--r-1);
+      color: var(--c-petrol);
+    }
+    ::selection { background: var(--c-orange-50); color: var(--c-orange-700); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: var(--c-line-2); border-radius: 99px; }
+
+    /* ═══ Animations ═══════════════════════════════════════════════ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    @keyframes drawLine {
+      from { stroke-dashoffset: 600; }
+      to   { stroke-dashoffset: 0; }
+    }
+    .anim-up { animation: fadeUp .5s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+    .anim-up-1 { animation-delay: .05s; }
+    .anim-up-2 { animation-delay: .12s; }
+    .anim-up-3 { animation-delay: .19s; }
+    .anim-up-4 { animation-delay: .26s; }
+    .anim-up-5 { animation-delay: .33s; }
+
+    /* ═══ Layout ════════════════════════════════════════════════════ */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ═══ Top nav ══════════════════════════════════════════════════ */
+    .topnav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,250,247,.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--c-line);
+    }
+    .topnav-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .topnav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .topnav-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--c-line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .topnav-logo img { width: 22px; height: 22px; object-fit: contain; }
+    .topnav-title {
+      font-family: var(--f-display);
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--c-ink);
+      letter-spacing: -.01em;
+    }
+    .topnav-back {
+      font-family: var(--f-display);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--c-ink-3);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color .15s;
+    }
+    .topnav-back:hover { color: var(--c-orange); text-decoration: none; }
+
+    /* ═══ Hero ══════════════════════════════════════════════════════ */
+    .hero {
+      padding: 64px 0 48px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--f-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--c-orange);
+      background: var(--c-orange-50);
+      padding: 5px 10px;
+      border-radius: 99px;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-family: var(--f-display);
+      font-weight: 900;
+      font-size: clamp(2.2rem, 6vw, 3.4rem);
+      letter-spacing: -.04em;
+      line-height: 1.05;
+      color: var(--c-ink);
+      margin-bottom: 18px;
+    }
+    .hero-title span { color: var(--c-orange); }
+    .hero-desc {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--c-ink-2);
+      max-width: 640px;
+      margin-bottom: 32px;
+    }
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pill {
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--c-line);
+      color: var(--c-ink-3);
+      background: var(--c-surface);
+    }
+    .pill strong { color: var(--c-ink); }
+
+    /* ═══ Section ══════════════════════════════════════════════════ */
+    .section { padding: 48px 0; border-top: 1px solid var(--c-line); }
+    .section:first-of-type { border-top: none; }
+    .section-label {
+      font-family: var(--f-display);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: var(--c-ink-4);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--f-display);
+      font-size: clamp(1.3rem, 3vw, 1.75rem);
+      font-weight: 800;
+      letter-spacing: -.025em;
+      color: var(--c-ink);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .section-desc {
+      color: var(--c-ink-2);
+      font-size: 14.5px;
+      line-height: 1.7;
+      max-width: 700px;
+      margin-bottom: 28px;
+    }
+
+    /* ═══ Cards ═════════════════════════════════════════════════════ */
+    .card-grid { display: grid; gap: 16px; }
+    .card-grid-2 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .card-grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+    .card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-line);
+      border-radius: var(--r-3);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--sh-2); }
+    .card-rail {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+    }
+    .card-inner { padding-left: 12px; }
+    .card-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+      font-size: 17px;
+    }
+    .card-title {
+      font-family: var(--f-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--c-ink);
+      margin-bottom: 6px;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--c-ink-3);
+      line-height: 1.6;
+    }
+
+    /* ═══ Timeline ══════════════════════════════════════════════════ */
+    .timeline { position: relative; padding-left: 40px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 14px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--c-line);
+    }
+    .tl-item {
+      position: relative;
+      margin-bottom: 32px;
+    }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-dot {
+      position: absolute;
+      left: -33px;
+      top: 2px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--f-display);
+      font-size: 9px;
+      font-weight: 700;
+      color: white;
+      z-index: 1;
+    }
+    .tl-tag {
+      display: inline-block;
+      font-family: var(--f-display);
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-bottom: 6px;
+    }
+    .tl-title {
+      font-family: var(--f-display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--c-ink);
+      margin-bottom: 6px;
+    }
+    .tl-desc {
+      font-size: 13.5px;
+      color: var(--c-ink-3);
+      line-height: 1.65;
+    }
+    .tl-code {
+      margin-top: 10px;
+      background: #F0EFEA;
+      border: 1px solid var(--c-line);
+      border-radius: var(--r-2);
+      padding: 12px 14px;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      color: var(--c-petrol);
+      line-height: 1.7;
+      overflow-x: auto;
+    }
+    .tl-code .comment { color: var(--c-ink-4); }
+    .tl-code .key { color: var(--c-orange); }
+    .tl-code .val { color: var(--c-teal-700); }
+
+    /* ═══ Tech Stack Grid ════════════════════════════════════════════ */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .stack-item {
+      background: var(--c-surface);
+      border: 1px solid var(--c-line);
+      border-radius: var(--r-2);
+      padding: 12px 14px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .stack-item:hover { border-color: var(--c-orange); box-shadow: var(--sh-1); }
+    .stack-name {
+      font-family: var(--f-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--c-ink);
+      margin-bottom: 3px;
+    }
+    .stack-role {
+      font-size: 11.5px;
+      color: var(--c-ink-4);
+      line-height: 1.4;
+    }
+
+    /* ═══ Design tokens visual ════════════════════════════════════ */
+    .color-swatch {
+      display: inline-block;
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      margin-right: 2px;
+      vertical-align: middle;
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    .token-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--c-line);
+      font-size: 13px;
+    }
+    .token-row:last-child { border-bottom: none; }
+    .token-name { font-family: var(--f-mono); color: var(--c-petrol); font-size: 12px; min-width: 130px; }
+    .token-value { font-family: var(--f-mono); color: var(--c-ink-4); font-size: 11.5px; }
+    .token-desc { color: var(--c-ink-3); font-size: 12.5px; }
+
+    /* ═══ Stats row ══════════════════════════════════════════════════ */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 24px 0;
+    }
+    .stat-box {
+      background: var(--c-surface);
+      border: 1px solid var(--c-line);
+      border-radius: var(--r-3);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-rail {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+    }
+    .stat-label {
+      font-family: var(--f-display);
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--c-ink-4);
+      margin-bottom: 6px;
+      padding-left: 10px;
+    }
+    .stat-value {
+      font-family: var(--f-display);
+      font-size: 1.65rem;
+      font-weight: 900;
+      letter-spacing: -.025em;
+      color: var(--c-ink);
+      padding-left: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-sub {
+      font-size: 11px;
+      color: var(--c-ink-4);
+      padding-left: 10px;
+      margin-top: 2px;
+    }
+
+    /* ═══ Callout ═══════════════════════════════════════════════════ */
+    .callout {
+      border-radius: var(--r-3);
+      padding: 18px 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .callout-title {
+      font-family: var(--f-display);
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .callout-desc { font-size: 13px; line-height: 1.6; }
+
+    /* ═══ Accordion ═════════════════════════════════════════════════ */
+    details {
+      border-bottom: 1px solid var(--c-line);
+      padding: 2px 0;
+    }
+    details:last-child { border-bottom: none; }
+    summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      cursor: pointer;
+      list-style: none;
+      font-family: var(--f-display);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--c-ink);
+      user-select: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: '+';
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--c-ink-4);
+      transition: transform .18s;
+      flex-shrink: 0;
+    }
+    details[open] summary::after { transform: rotate(45deg); color: var(--c-orange); }
+    details[open] summary { color: var(--c-orange); }
+    .details-body {
+      padding-bottom: 16px;
+      font-size: 13.5px;
+      color: var(--c-ink-2);
+      line-height: 1.7;
+    }
+
+    /* ═══ Footer ════════════════════════════════════════════════════ */
+    .footer {
+      border-top: 1px solid var(--c-line);
+      padding: 32px 0;
+      text-align: center;
+    }
+    .footer-text {
+      font-size: 12.5px;
+      color: var(--c-ink-4);
+      line-height: 1.7;
+    }
+    .footer-text strong { color: var(--c-ink-3); }
+
+    /* ═══ Responsive ════════════════════════════════════════════════ */
+    @media (max-width: 600px) {
+      .container { padding: 0 16px; }
+      .hero { padding: 40px 0 32px; }
+      .timeline { padding-left: 32px; }
+      .timeline::before { left: 10px; }
+      .tl-dot { left: -27px; width: 16px; height: 16px; font-size: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Top nav ── -->
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="topnav-brand">
+        <div class="topnav-logo">
+          <img src="/logo.png" alt="Prefeitura de Fortaleza" onerror="this.style.display='none'" />
+        </div>
+        <span class="topnav-title">ITBI Fortaleza</span>
+      </div>
+      <a href="/" class="topnav-back">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M8 2L4 6l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Voltar ao Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <main>
+    <div class="container">
+      <section class="hero anim-up anim-up-1">
+        <div class="hero-eyebrow">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <circle cx="5.5" cy="5.5" r="5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M5.5 3.5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Como foi construído
+        </div>
+        <h1 class="hero-title">
+          Processo<span>.</span>
+        </h1>
+        <p class="hero-desc">
+          A história completa de como o Dashboard ITBI Fortaleza foi construído —
+          da ideia ao deploy, passando pela coleta de dados reais, ETL em Python,
+          design system e cada decisão técnica ao longo do caminho.
+        </p>
+        <div class="hero-pills">
+          <span class="pill"><strong>94.970</strong> registros reais</span>
+          <span class="pill"><strong>30 anos</strong> de dados (1996–2026)</span>
+          <span class="pill"><strong>Python + React</strong> stack</span>
+          <span class="pill"><strong>Vercel</strong> deploy</span>
+          <span class="pill"><strong>MIT</strong> licença aberta</span>
+        </div>
+      </section>
+
+      <!-- ── 1. O ponto de partida ── -->
+      <section class="section anim-up anim-up-2">
+        <div class="section-label">Capítulo 1</div>
+        <h2 class="section-title">O ponto de partida</h2>
+        <p class="section-desc">
+          Um projeto acadêmico com um requisito incomum: <em>rastreabilidade completa</em>.
+          O professor não queria Power Query nem transformações invisíveis —
+          queria ver o dado bruto da prefeitura virar insight de ponta a ponta.
+        </p>
+
+        <div class="callout" style="background:#E8EEF1; border:1px solid #C5D4DC; margin-bottom:20px;">
+          <div class="callout-icon">📋</div>
+          <div>
+            <div class="callout-title" style="color:#1F3845;">O desafio proposto</div>
+            <div class="callout-desc" style="color:#325565;">
+              Coletar dados abertos de ITBI do Portal da Prefeitura de Fortaleza, processar
+              via script Python documentado e construir um dashboard web interativo que permita
+              análise temporal, espacial e de mercado — tudo publicado e acessível.
+            </div>
+          </div>
+        </div>
+
+        <div class="card-grid card-grid-2">
+          <div class="card anim-up anim-up-3">
+            <div class="card-rail" style="background:#325565;"></div>
+            <div class="card-inner">
+              <div class="card-icon" style="background:rgba(50,85,101,.1); color:#325565;">🏛️</div>
+              <div class="card-title">Fonte: Dados Abertos</div>
+              <div class="card-desc">Portal <strong>dados.fortaleza.ce.gov.br</strong> — dataset público da SEFIN (Secretaria Municipal de Finanças). CSV bruto com todos os lançamentos de ITBI desde 1996.</div>
+            </div>
+          </div>
+          <div class="card anim-up anim-up-4">
+            <div class="card-rail" style="background:#F15A22;"></div>
+            <div class="card-inner">
+              <div class="card-icon" style="background:rgba(241,90,34,.1); color:#F15A22;">🔒</div>
+              <div class="card-title">Regra do professor</div>
+              <div class="card-desc">Nenhuma transformação em ferramentas como Excel ou Power Query. O ETL precisa ser em <strong>código versionado</strong>, com cada etapa documentada e reproduzível.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 2. Os dados ── -->
+      <section class="section">
+        <div class="section-label">Capítulo 2</div>
+        <h2 class="section-title">Os dados brutos</h2>
+        <p class="section-desc">
+          O CSV da SEFIN chegou cheio de armadilhas. Entender cada uma delas
+          foi o primeiro passo real do projeto.
+        </p>
+
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-rail" style="background:#325565;"></div>
+            <div class="stat-label">Total de registros</div>
+            <div class="stat-value">94.970</div>
+            <div class="stat-sub">após limpeza e dedup</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-rail" style="background:#F15A22;"></div>
+            <div class="stat-label">Volume total</div>
+            <div class="stat-value">R$43bi</div>
+            <div class="stat-sub">base de cálculo acumulada</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-rail" style="background:#009889;"></div>
+            <div class="stat-label">Bairros únicos</div>
+            <div class="stat-value">121</div>
+            <div class="stat-sub">mapeados em Fortaleza</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-rail" style="background:#00A0DC;"></div>
+            <div class="stat-label">Cobertura</div>
+            <div class="stat-value">30 anos</div>
+            <div class="stat-sub">1996 → 2026</div>
+          </div>
+        </div>
+
+        <div class="callout" style="background:#FFF8F5; border:1px solid #FDDCC9;">
+          <div class="callout-icon">⚠️</div>
+          <div>
+            <div class="callout-title" style="color:#C04617;">A armadilha do num_dti</div>
+            <div class="callout-desc" style="color:#7A3010;">
+              O campo <code>num_dti</code> no CSV mostrava <strong>2.187/2026</strong> — o que parecia o total de registros do ano.
+              Mas era apenas o número sequencial do último documento emitido em 2026.
+              O total real era bem maior. Detectado pela discrepância no <code>COUNT(*)</code> do ETL.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 3. ETL Python ── -->
+      <section class="section">
+        <div class="section-label">Capítulo 3</div>
+        <h2 class="section-title">O pipeline ETL em Python</h2>
+        <p class="section-desc">
+          O <code>etl_itbi.py</code> transforma o CSV bruto da prefeitura em dados
+          limpos, padronizados e prontos para o dashboard — sem depender de nenhuma ferramenta externa.
+        </p>
+
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#325565;">E</div>
+            <div class="tl-tag" style="background:#E8EEF1; color:#325565;">Extract</div>
+            <div class="tl-title">Leitura do CSV bruto</div>
+            <div class="tl-desc">O arquivo da SEFIN usa <strong>encoding latin-1</strong> (não UTF-8) e <strong>separador ponto-e-vírgula</strong>. Ler com as configurações erradas destroça nomes de bairros com acentos.</div>
+            <div class="tl-code"><span class="key">import</span> pandas <span class="key">as</span> pd
+<span class="comment"># encoding correto: latin-1, separador: ;</span>
+df = pd.read_csv(
+  <span class="val">'itbi_raw.csv'</span>,
+  encoding=<span class="val">'latin-1'</span>,
+  sep=<span class="val">';'</span>,
+  decimal=<span class="val">','</span>
+)</div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#F15A22;">T</div>
+            <div class="tl-tag" style="background:#FEEFE7; color:#C04617;">Transform</div>
+            <div class="tl-title">Limpeza e campos derivados</div>
+            <div class="tl-desc">Remoção de duplicatas, conversão de datas, normalização de nomes de bairros, cálculo de campos que o CSV original não tinha: <strong>idade do imóvel</strong>, <strong>valor por m²</strong> e <strong>faixa de valor</strong>.</div>
+            <div class="tl-code"><span class="comment"># Campos derivados</span>
+df[<span class="val">'idade_imovel'</span>] = ano_atual - df[<span class="val">'ano_construcao'</span>]
+df[<span class="val">'valor_m2'</span>]    = df[<span class="val">'vl_base_calculo'</span>] / df[<span class="val">'area_terreno'</span>]
+df[<span class="val">'faixa_valor'</span>] = pd.cut(
+  df[<span class="val">'vl_base_calculo'</span>],
+  bins=[0, 100e3, 300e3, 500e3, 1e6, float(<span class="val">'inf'</span>)],
+  labels=[<span class="val">'&lt;100k'</span>,<span class="val">'100-300k'</span>,<span class="val">'300-500k'</span>,<span class="val">'500k-1M'</span>,<span class="val">'&gt;1M'</span>]
+)</div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#009889;">L</div>
+            <div class="tl-tag" style="background:#E2F4F0; color:#00746A;">Load</div>
+            <div class="tl-title">Saída em UTF-8 para o browser</div>
+            <div class="tl-desc">O CSV final (<code>itbi_clean.csv</code>) sai em UTF-8, pronto para ser lido pelo PapaParse diretamente no browser — sem backend, sem banco de dados.</div>
+            <div class="tl-code"><span class="comment"># Salva limpo — UTF-8, sem BOM</span>
+df.to_csv(
+  <span class="val">'public/itbi_clean.csv'</span>,
+  index=<span class="val">False</span>,
+  encoding=<span class="val">'utf-8'</span>
+)
+<span class="comment"># Ground truth para validação no frontend</span>
+print(f<span class="val">"Total: {len(df):,} registros"</span>)
+print(f<span class="val">"Soma vl_base: R${df.vl_base_calculo.sum():,.2f}"</span>)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 4. Design System ── -->
+      <section class="section">
+        <div class="section-label">Capítulo 4</div>
+        <h2 class="section-title">O Design System PMF</h2>
+        <p class="section-desc">
+          Antes de escrever um componente, o design system foi definido.
+          Todos os tokens ficam em <code>src/index.css</code> como variáveis CSS nativas —
+          sem dependência de tema JS, sem runtime overhead.
+        </p>
+
+        <div class="card" style="padding:0; overflow:hidden; margin-bottom:20px;">
+          <div style="padding:16px 20px; border-bottom:1px solid var(--c-line); display:flex; align-items:center; gap:8px;">
+            <span style="font-family:var(--f-display); font-weight:700; font-size:13px; color:var(--c-ink);">Paleta de cores</span>
+            <span style="font-family:var(--f-mono); font-size:11px; color:var(--c-ink-4);">— 4 cores primárias + escalas</span>
+          </div>
+          <div style="padding:16px 20px;">
+            <div class="token-row">
+              <span class="color-swatch" style="background:#F15A22;"></span>
+              <span class="token-name">--c-orange</span>
+              <span class="token-value">#F15A22</span>
+              <span class="token-desc">Acento primário — CTAs, highlights, alerta</span>
+            </div>
+            <div class="token-row">
+              <span class="color-swatch" style="background:#009889;"></span>
+              <span class="token-name">--c-teal</span>
+              <span class="token-value">#009889</span>
+              <span class="token-desc">Positivo / sucesso / crescimento</span>
+            </div>
+            <div class="token-row">
+              <span class="color-swatch" style="background:#325565;"></span>
+              <span class="token-name">--c-petrol</span>
+              <span class="token-value">#325565</span>
+              <span class="token-desc">Estrutural — sidebar, cabeçalhos, navs</span>
+            </div>
+            <div class="token-row">
+              <span class="color-swatch" style="background:#00A0DC;"></span>
+              <span class="token-name">--c-cyan</span>
+              <span class="token-value">#00A0DC</span>
+              <span class="token-desc">Informacional — links, estados neutros</span>
+            </div>
+            <div class="token-row">
+              <span class="color-swatch" style="background:#FAFAF7; border-color:#D8D4C9;"></span>
+              <span class="token-name">--c-bg</span>
+              <span class="token-value">#FAFAF7</span>
+              <span class="token-desc">Fundo global — tom creme quente, não branco puro</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-grid card-grid-2">
+          <div class="card">
+            <div class="card-rail" style="background:#325565;"></div>
+            <div class="card-inner">
+              <div class="card-title">Tipografia</div>
+              <div class="card-desc">
+                <strong style="font-family:var(--f-display);">Archivo</strong> para títulos e labels (bold, display).<br/>
+                <strong style="font-family:var(--f-body);">Space Grotesk</strong> para corpo de texto.<br/>
+                <code>JetBrains Mono</code> para números, código e valores.
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-rail" style="background:#009889;"></div>
+            <div class="card-inner">
+              <div class="card-title">Elevação & Animação</div>
+              <div class="card-desc">
+                3 níveis de sombra (<code>--sh-1</code>, <code>--sh-2</code>, <code>--sh-3</code>).
+                Transições em 4 velocidades (<code>--t-fast</code> 150ms até <code>--t-bounce</code> 600ms).
+                Framer Motion para todas as entradas de página.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 5. Stack técnica ── -->
+      <section class="section">
+        <div class="section-label">Capítulo 5</div>
+        <h2 class="section-title">A stack técnica</h2>
+        <p class="section-desc">
+          Cada biblioteca foi escolhida por uma razão específica.
+          Nenhum overengineering — cada dependência tem seu papel.
+        </p>
+
+        <div class="stack-grid">
+          <div class="stack-item">
+            <div class="stack-name">React 19</div>
+            <div class="stack-role">UI com concurrent features</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">Vite 8</div>
+            <div class="stack-role">Build ultrarrápido com HMR</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">TypeScript</div>
+            <div class="stack-role">Tipagem dos dados e props</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">Recharts</div>
+            <div class="stack-role">Gráficos SVG composable</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">Framer Motion</div>
+            <div class="stack-role">Animações e transições</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">GSAP</div>
+            <div class="stack-role">Animação de intro (tela inicial)</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">Leaflet</div>
+            <div class="stack-role">Mapa interativo de bairros</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">PapaParse</div>
+            <div class="stack-role">CSV parsing no browser</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">Tailwind v4</div>
+            <div class="stack-role">Utilitários CSS (layout)</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">Vercel</div>
+            <div class="stack-role">Deploy + CDN global</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">Python (ETL)</div>
+            <div class="stack-role">Pandas, dados brutos → clean</div>
+          </div>
+          <div class="stack-item">
+            <div class="stack-name">GitHub</div>
+            <div class="stack-role">Versionamento + CI/CD</div>
+          </div>
+        </div>
+
+        <div class="callout" style="background:#E2F4F0; border:1px solid #A8DDD6; margin-top:20px;">
+          <div class="callout-icon">💡</div>
+          <div>
+            <div class="callout-title" style="color:#00746A;">Por que sem backend?</div>
+            <div class="callout-desc" style="color:#005A53;">
+              O dataset completo tem 94.970 linhas — 13 MB de CSV. O PapaParse lê isso em ~200ms
+              no browser moderno. Sem servidor significa <strong>zero latência de API</strong>,
+              <strong>deploy gratuito</strong> e <strong>disponibilidade garantida pela CDN do Vercel</strong>.
+              Para um dataset de análise histórica que não muda a cada minuto, é a escolha certa.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 6. Funcionalidades ── -->
+      <section class="section">
+        <div class="section-label">Capítulo 6</div>
+        <h2 class="section-title">O que foi construído</h2>
+        <p class="section-desc">
+          Quatro páginas de análise, um sistema de filtros global,
+          uma animação de intro e vários componentes de UI reutilizáveis.
+        </p>
+
+        <div class="card-grid card-grid-2" style="margin-bottom:20px;">
+          <div class="card">
+            <div class="card-rail" style="background:#F15A22;"></div>
+            <div class="card-inner">
+              <div class="card-icon" style="background:rgba(241,90,34,.1); color:#F15A22;">📈</div>
+              <div class="card-title">Análise Temporal</div>
+              <div class="card-desc">Série histórica de transações por mês, heatmap de sazonalidade (grade ano×mês), comparativo anual e distribuição por faixa de valor.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-rail" style="background:#009889;"></div>
+            <div class="card-inner">
+              <div class="card-icon" style="background:rgba(0,152,137,.1); color:#009889;">🗺️</div>
+              <div class="card-title">Análise Espacial</div>
+              <div class="card-desc">Mapa interativo com camada GeoJSON dos bairros, ranking dos 20 bairros com maior volume e curva de Pareto de concentração.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-rail" style="background:#325565;"></div>
+            <div class="card-inner">
+              <div class="card-icon" style="background:rgba(50,85,101,.1); color:#325565;">🏢</div>
+              <div class="card-title">Análise de Mercado</div>
+              <div class="card-desc">Distribuição por tipo de uso (residencial, comercial), padrão construtivo, scatter de idade×valor/m² e distribuição por zoneamento.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-rail" style="background:#00A0DC;"></div>
+            <div class="card-inner">
+              <div class="card-icon" style="background:rgba(0,160,220,.1); color:#00A0DC;">🔍</div>
+              <div class="card-title">Explorer</div>
+              <div class="card-desc">Busca e comparação de bairros, tabela de estatísticas detalhadas com ticket médio, valor/m² e percentual do total de transações.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-family:var(--f-display); font-weight:700; font-size:14px; color:var(--c-ink); margin-bottom:12px;">Componentes de infraestrutura</div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:8px;">
+            <div style="font-size:12.5px; color:var(--c-ink-2); padding:8px 10px; background:#FAFAF7; border-radius:8px; border:1px solid var(--c-line);">
+              <div style="font-weight:600; color:var(--c-ink); font-family:var(--f-mono); font-size:11.5px; margin-bottom:2px;">FilterContext</div>
+              Sistema de filtros global com React Context
+            </div>
+            <div style="font-size:12.5px; color:var(--c-ink-2); padding:8px 10px; background:#FAFAF7; border-radius:8px; border:1px solid var(--c-line);">
+              <div style="font-weight:600; color:var(--c-ink); font-family:var(--f-mono); font-size:11.5px; margin-bottom:2px;">KPICard</div>
+              Cards com counter animado e sparkline
+            </div>
+            <div style="font-size:12.5px; color:var(--c-ink-2); padding:8px 10px; background:#FAFAF7; border-radius:8px; border:1px solid var(--c-line);">
+              <div style="font-weight:600; color:var(--c-ink); font-family:var(--f-mono); font-size:11.5px; margin-bottom:2px;">IntroAnimation</div>
+              Tela inicial GSAP com logo e data
+            </div>
+            <div style="font-size:12.5px; color:var(--c-ink-2); padding:8px 10px; background:#FAFAF7; border-radius:8px; border:1px solid var(--c-line);">
+              <div style="font-weight:600; color:var(--c-ink); font-family:var(--f-mono); font-size:11.5px; margin-bottom:2px;">MethodologyBanner</div>
+              Banner de primeira visita com notas metodológicas
+            </div>
+            <div style="font-size:12.5px; color:var(--c-ink-2); padding:8px 10px; background:#FAFAF7; border-radius:8px; border:1px solid var(--c-line);">
+              <div style="font-weight:600; color:var(--c-ink); font-family:var(--f-mono); font-size:11.5px; margin-bottom:2px;">AboutModal</div>
+              Modal com stack, ETL e fonte dos dados
+            </div>
+            <div style="font-size:12.5px; color:var(--c-ink-2); padding:8px 10px; background:#FAFAF7; border-radius:8px; border:1px solid var(--c-line);">
+              <div style="font-weight:600; color:var(--c-ink); font-family:var(--f-mono); font-size:11.5px; margin-bottom:2px;">dataValidation</div>
+              Ground truth dos dados para cross-check
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 7. Deploy ── -->
+      <section class="section">
+        <div class="section-label">Capítulo 7</div>
+        <h2 class="section-title">Do código ao ar</h2>
+        <p class="section-desc">
+          O deploy é automático — cada <code>git push origin main</code> dispara
+          um novo build no Vercel em menos de 2 minutos.
+        </p>
+
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#325565;">1</div>
+            <div class="tl-title">Repositório GitHub</div>
+            <div class="tl-desc">O código vive em <code>github.com/devetinn/itbi-bi-dashboard</code>. Cada branch tem preview deploy automático no Vercel.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#F15A22;">2</div>
+            <div class="tl-title">Push → Build</div>
+            <div class="tl-desc">O Vercel detecta o push, executa <code>npm run build</code> (tsc + vite build) e valida a saída. Build típico: ~1.1s.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#009889;">3</div>
+            <div class="tl-title">CDN global</div>
+            <div class="tl-desc">Os assets são distribuídos em edge nodes globais. O CSV de 13MB é servido com cache, carregando em ~200ms para usuários no Brasil.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#00A0DC;">4</div>
+            <div class="tl-title">Zero config necessária</div>
+            <div class="tl-desc">O <code>vercel.json</code> tem apenas 3 linhas: <code>buildCommand</code>, <code>outputDirectory</code> e <code>framework</code>. O resto é inferido automaticamente.</div>
+            <div class="tl-code">{
+  <span class="key">"buildCommand"</span>: <span class="val">"npm run build"</span>,
+  <span class="key">"outputDirectory"</span>: <span class="val">"dist"</span>,
+  <span class="key">"framework"</span>: <span class="val">"vite"</span>
+}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 8. Decisões e aprendizados ── -->
+      <section class="section">
+        <div class="section-label">Capítulo 8</div>
+        <h2 class="section-title">Decisões e aprendizados</h2>
+        <p class="section-desc">
+          As escolhas que pareciam simples e as armadilhas que não eram.
+        </p>
+
+        <div style="border-radius:var(--r-3); overflow:hidden; border:1px solid var(--c-line); background:var(--c-surface);">
+          <div style="padding:16px 20px; border-bottom:1px solid var(--c-line); font-family:var(--f-display); font-weight:700; font-size:13px; color:var(--c-ink);">
+            Perguntas frequentes do processo
+          </div>
+          <div style="padding:0 20px;">
+            <details>
+              <summary>Por que PapaParse no browser e não SQLite?</summary>
+              <div class="details-body">
+                O CSV tem ~13 MB, e o usuário filtrado médio consulta menos de 5% dos registros.
+                O PapaParse parseia tudo em ~200ms no browser moderno.
+                SQLite via WASM seria mais poderoso para queries complexas, mas adicionaria
+                300 KB de bundle e complexidade sem benefício perceptível para este caso de uso.
+              </div>
+            </details>
+            <details>
+              <summary>Por que Tailwind v4 junto com variáveis CSS customizadas?</summary>
+              <div class="details-body">
+                Tailwind cuida do <em>layout</em> (flex, grid, spacing utilitário, responsivo) —
+                onde ele é imbatível em velocidade de desenvolvimento. As variáveis CSS cuidam
+                do <em>design system</em> (cores, tipografia, sombras) — onde precisamos de
+                semântica e não de nomes utilitários. Os dois coexistem perfeitamente.
+              </div>
+            </details>
+            <details>
+              <summary>Por que Recharts em vez de Chart.js ou D3 direto?</summary>
+              <div class="details-body">
+                Recharts é composable em JSX — você monta o gráfico como componentes React.
+                Chart.js exige manipulação de refs e configuração imperativa (mais verboso no React).
+                D3 direto dá mais controle, mas exige gerenciar o DOM manualmente — perigoso misturar
+                com o virtual DOM do React. Para esse nível de complexidade, Recharts é o meio-termo certo.
+              </div>
+            </details>
+            <details>
+              <summary>GSAP para a intro e Framer Motion para o resto — por quê dois?</summary>
+              <div class="details-body">
+                GSAP é o melhor do mercado para animações de tela cheia e sequências complexas com timeline.
+                A intro era um caso ideal: partículas flutuando, logo revelando, contador.
+                Framer Motion é mais ergonômico para animações de componentes React
+                (variants, AnimatePresence, layout animations) — onde o GSAP seria mais verboso.
+              </div>
+            </details>
+            <details>
+              <summary>O que eu faria diferente?</summary>
+              <div class="details-body">
+                Usaria <strong>streaming de CSV</strong> no PapaParse desde o início — parsear chunk por chunk
+                e atualizar a UI progressivamente, em vez de esperar o arquivo completo.
+                Também teria criado os tokens de design system antes do primeiro componente,
+                em vez de refatorar cores hardcoded depois.
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Final ── -->
+      <section class="section">
+        <div style="text-align:center; padding:24px 0 8px;">
+          <div style="font-size:28px; margin-bottom:12px;">🏙️</div>
+          <h2 style="font-family:var(--f-display); font-size:1.4rem; font-weight:800; letter-spacing:-.02em; color:var(--c-ink); margin-bottom:10px;">
+            Fortaleza em dados.
+          </h2>
+          <p style="font-size:14px; color:var(--c-ink-3); max-width:500px; margin:0 auto 24px; line-height:1.7;">
+            94.970 transações. 30 anos de história imobiliária.
+            Uma cidade que cresce, muda de mãos, se valoriza e se transforma —
+            tudo registrado na base de cálculo do ITBI.
+          </p>
+          <a href="/" style="
+            display:inline-flex; align-items:center; gap:8px;
+            background:#F15A22; color:white;
+            font-family:var(--f-display); font-weight:700; font-size:13.5px;
+            padding:11px 22px; border-radius:99px;
+            transition:background .15s, transform .15s;
+          " onmouseover="this.style.background='#C04617'; this.style.transform='translateY(-1px)'"
+             onmouseout="this.style.background='#F15A22'; this.style.transform='translateY(0)'">
+            Ver o Dashboard
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <path d="M3 6.5h7M7 3.5l3 3-3 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-text">
+        Dashboard ITBI Fortaleza · Dados: <strong>Portal Dados Abertos de Fortaleza (SEFIN)</strong><br/>
+        Stack: React 19 + Vite + TypeScript + Python ETL · Deploy: Vercel
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
