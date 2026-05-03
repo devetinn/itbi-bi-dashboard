@@ -209,6 +209,42 @@ export function Sidebar({
               </motion.div>
             )
           })}
+
+          <div className="mt-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-[9px] uppercase mb-2 px-3 font-semibold"
+              style={{
+                fontFamily: 'var(--f-display)',
+                letterSpacing: '.15em',
+                color: 'rgba(255,255,255,0.28)',
+              }}
+            >
+              Documentação
+            </motion.div>
+            <motion.a
+              href="/processo.html"
+              className="relative z-10 w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors duration-150 group"
+              style={{
+                fontFamily: 'var(--f-body)',
+                color: 'rgba(255,255,255,0.48)',
+                textDecoration: 'none'
+              }}
+              onMouseEnter={e => e.currentTarget.style.color = '#F15A22'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.48)'}
+            >
+              <motion.span className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 3.5C4 2.67157 4.67157 2 5.5 2H10.5C11.3284 2 12 2.67157 12 3.5V12.5C12 13.3284 11.3284 14 10.5 14H5.5C4.67157 14 4 13.3284 4 12.5V3.5Z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6 5.5H10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                  <path d="M6 8.5H8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                </svg>
+              </motion.span>
+              <span className="tracking-tight">Processo e IA</span>
+            </motion.a>
+          </div>
         </nav>
 
         {/* Footer */}
