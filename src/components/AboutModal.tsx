@@ -163,6 +163,19 @@ export function AboutModal() {
                     ))}
                   </div>
                 </section>
+                {/* Processo Button */}
+                <section>
+                  <a 
+                    href="/processo.html" 
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-lg text-sm font-bold mt-2 transition-all hover:opacity-90" 
+                    style={{ background: '#F15A22', color: '#fff', textDecoration: 'none', fontFamily: 'var(--f-display)' }}
+                  >
+                    Ver Processo e Arquitetura (IA + Dev)
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </a>
+                </section>
               </div>
             </motion.div>
           </>
