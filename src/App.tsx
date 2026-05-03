@@ -8,6 +8,7 @@ import { PageTemporal } from './components/pages/PageTemporal'
 import { PageEspacial } from './components/pages/PageEspacial'
 import { PageMercado } from './components/pages/PageMercado'
 import { PageExplorer } from './components/pages/PageExplorer'
+import { PageProcesso } from './components/pages/PageProcesso'
 import { MethodologyBanner } from './components/MethodologyBanner'
 import { IntroAnimation } from './components/IntroAnimation'
 
@@ -34,7 +35,7 @@ const pageVariants = {
   }),
 }
 
-const PAGE_ORDER = ['temporal', 'espacial', 'mercado', 'explorer']
+const PAGE_ORDER = ['temporal', 'espacial', 'mercado', 'explorer', 'processo']
 
 function Dashboard() {
   const [activePage, setActivePage] = useState('temporal')
@@ -105,6 +106,7 @@ function Dashboard() {
             {activePage === 'explorer' && (
               <PageExplorer bairroStats={data.bairroStats} />
             )}
+            {activePage === 'processo' && <PageProcesso />}
           </motion.div>
         )}
       </AnimatePresence>
