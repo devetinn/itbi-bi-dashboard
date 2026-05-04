@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A Jornada dos Dados — Por Trás do ITBI</title>
+  <title>A Jornada dos Dados — Documentação de Processo</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --bg: #030712;
-      --surface: #111827;
-      --surface-glass: rgba(17, 24, 39, 0.7);
-      --text-main: #F9FAFB;
-      --text-muted: #9CA3AF;
+      --bg: #0A0A0A;
+      --surface: #121212;
+      --surface-glass: rgba(18, 18, 18, 0.75);
+      --text-main: #F3F4F6;
+      --text-muted: #A1A1AA;
       
-      --brand: #F97316; /* Laranja vibrante */
-      --brand-glow: rgba(249, 115, 22, 0.4);
-      --accent-1: #3B82F6; /* Azul */
-      --accent-2: #10B981; /* Verde */
-      --accent-3: #8B5CF6; /* Roxo */
+      --brand: #F15A22; 
+      --brand-glow: rgba(241, 90, 34, 0.3);
+      --accent-1: #2563EB; 
+      --accent-2: #059669; 
+      --accent-3: #7C3AED; 
       
       --font-display: 'Outfit', sans-serif;
       --font-body: 'Plus Jakarta Sans', sans-serif;
@@ -38,8 +38,8 @@
     .bg-pattern {
       position: fixed; inset: 0; z-index: -1;
       background-image: 
-        radial-gradient(circle at 15% 50%, rgba(249, 115, 22, 0.08), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.08), transparent 25%);
+        radial-gradient(circle at 20% 40%, rgba(241, 90, 34, 0.05), transparent 30%),
+        radial-gradient(circle at 80% 60%, rgba(37, 99, 235, 0.04), transparent 30%);
       background-size: cover;
     }
 
@@ -51,170 +51,130 @@
       padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;
     }
     .back-btn {
-      color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 14px;
-      display: flex; align-items: center; gap: 8px; transition: 0.3s;
+      color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px;
+      display: flex; align-items: center; gap: 8px; transition: color 0.2s;
     }
-    .back-btn:hover { color: var(--text-main); transform: translateX(-4px); }
+    .back-btn:hover { color: var(--text-main); }
 
     /* ═══ Hero Section ═══ */
     .hero {
-      min-height: 80vh; display: flex; flex-direction: column;
+      min-height: 70vh; display: flex; flex-direction: column;
       align-items: center; justify-content: center; text-align: center;
-      padding: 100px 24px 60px; position: relative;
+      padding: 120px 24px 60px; position: relative;
     }
     .badge {
-      display: inline-block; padding: 8px 16px; border-radius: 99px;
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-      font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+      display: inline-block; padding: 6px 14px; border-radius: 99px;
+      background: rgba(241, 90, 34, 0.05); border: 1px solid rgba(241, 90, 34, 0.2);
+      font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
       margin-bottom: 24px; color: var(--brand);
-      animation: float 4s ease-in-out infinite;
     }
     .hero h1 {
-      font-family: var(--font-display); font-size: clamp(3rem, 8vw, 5rem); font-weight: 900;
-      line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.03em;
-      background: linear-gradient(135deg, #FFFFFF 0%, #9CA3AF 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 700;
+      line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em;
     }
     .hero p {
-      font-size: clamp(1rem, 3vw, 1.25rem); color: var(--text-muted); max-width: 700px;
+      font-size: 18px; color: var(--text-muted); max-width: 680px; font-weight: 400;
     }
 
     /* ═══ A Jornada (Timeline) ═══ */
     .journey {
-      max-width: 1000px; margin: 0 auto; padding: 0 24px 100px;
+      max-width: 900px; margin: 0 auto; padding: 0 24px 80px;
       position: relative;
     }
     
-    /* Linha central da jornada */
     .timeline-line {
-      position: absolute; left: 50%; top: 0; bottom: 0; width: 4px;
-      background: linear-gradient(to bottom, var(--brand), var(--accent-1), var(--accent-3));
-      transform: translateX(-50%); border-radius: 4px;
-      opacity: 0.2;
+      position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+      background: rgba(255,255,255,0.08); transform: translateX(-50%);
     }
     .timeline-progress {
-      position: absolute; left: 50%; top: 0; width: 4px;
-      background: linear-gradient(to bottom, var(--brand), var(--accent-1), var(--accent-3));
-      transform: translateX(-50%); border-radius: 4px;
-      box-shadow: 0 0 20px var(--brand);
-      transition: height 0.1s;
+      position: absolute; left: 50%; top: 0; width: 2px;
+      background: var(--brand); transform: translateX(-50%);
+      box-shadow: 0 0 15px var(--brand); transition: height 0.1s ease-out;
     }
 
     .step {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 120px; position: relative; width: 100%;
-      opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+      margin-bottom: 100px; position: relative; width: 100%;
+      opacity: 0; transform: translateY(30px); transition: all 0.6s ease-out;
     }
     .step.visible { opacity: 1; transform: translateY(0); }
-    
     .step:nth-child(odd) { flex-direction: row-reverse; }
 
-    /* Ponto no meio */
     .step-dot {
       position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-      width: 24px; height: 24px; border-radius: 50%; background: var(--bg);
-      border: 4px solid var(--brand); z-index: 2; transition: 0.4s;
+      width: 16px; height: 16px; border-radius: 50%; background: var(--bg);
+      border: 3px solid var(--brand); z-index: 2; transition: 0.3s;
     }
-    .step.visible .step-dot { box-shadow: 0 0 30px var(--brand-glow); }
+    .step.visible .step-dot { box-shadow: 0 0 20px var(--brand-glow); }
 
-    .step-content {
-      width: 45%; position: relative;
-      perspective: 1000px;
-    }
+    .step-content { width: 45%; }
 
-    /* Cards interactivos */
     .card {
-      background: var(--surface-glass); backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.08); border-radius: 24px;
-      padding: 40px; position: relative; overflow: hidden;
-      transition: all 0.4s ease; transform-style: preserve-3d;
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px; padding: 36px; position: relative; overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
     
     .step:hover .card {
-      transform: translateY(-8px) rotateX(2deg) rotateY(2deg);
-      border-color: rgba(255,255,255,0.2);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      border-color: rgba(255,255,255,0.15);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
-
-    /* Brilho no hover do card */
-    .card::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
-      opacity: 0; transition: opacity 0.3s; z-index: 0; pointer-events: none;
-    }
-    .card:hover::before { opacity: 1; }
-
-    .card > * { position: relative; z-index: 1; }
 
     .step-number {
-      font-family: var(--font-display); font-size: 80px; font-weight: 900;
-      position: absolute; top: -10px; right: 20px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      user-select: none; pointer-events: none;
+      font-family: var(--font-display); font-size: 56px; font-weight: 800;
+      position: absolute; top: -5px; right: 20px;
+      color: rgba(255,255,255,0.03); user-select: none; pointer-events: none;
     }
 
     .card-icon {
-      font-size: 32px; margin-bottom: 24px; display: inline-block;
-      padding: 16px; border-radius: 16px; background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 20px; display: inline-flex; align-items: center; justify-content: center;
+      width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05); color: var(--text-main);
     }
 
     .card h2 {
-      font-family: var(--font-display); font-size: 28px; font-weight: 800;
-      margin-bottom: 16px; line-height: 1.2;
+      font-family: var(--font-display); font-size: 24px; font-weight: 600;
+      margin-bottom: 12px; line-height: 1.3;
     }
-    .card p { font-size: 16px; color: var(--text-muted); margin-bottom: 24px; }
+    .card p { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
 
-    /* Bloco de "Visão de Negócio" (Insight) */
+    /* Insight de Negócio */
     .insight {
-      background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(249, 115, 22, 0.02));
-      border-left: 3px solid var(--brand); padding: 16px 20px; border-radius: 0 12px 12px 0;
+      background: rgba(255,255,255,0.02); border-left: 2px solid var(--brand); 
+      padding: 16px; border-radius: 0 8px 8px 0;
     }
     .insight-title {
-      font-family: var(--font-display); font-size: 12px; text-transform: uppercase;
-      letter-spacing: 1px; color: var(--brand); margin-bottom: 4px; font-weight: 800;
+      font-family: var(--font-body); font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600;
     }
-    .insight-text { font-size: 14px; color: var(--text-main); font-weight: 500; }
+    .insight-text { font-size: 14px; color: #E4E4E7; font-weight: 400; line-height: 1.5; }
 
-    /* Cores personalizadas por step */
-    .step-2 .timeline-progress, .step-2 .step-dot { border-color: var(--accent-1); box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); }
-    .step-2 .insight { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent); border-left-color: var(--accent-1); }
-    .step-2 .insight-title { color: var(--accent-1); }
+    /* Variações sutis de cor */
+    .step-2 .timeline-progress, .step-2 .step-dot { border-color: var(--accent-1); box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); }
+    .step-2 .insight { border-left-color: var(--accent-1); }
 
-    .step-3 .timeline-progress, .step-3 .step-dot { border-color: var(--accent-3); box-shadow: 0 0 30px rgba(139, 92, 246, 0.4); }
-    .step-3 .insight { background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), transparent); border-left-color: var(--accent-3); }
-    .step-3 .insight-title { color: var(--accent-3); }
+    .step-3 .timeline-progress, .step-3 .step-dot { border-color: var(--accent-3); box-shadow: 0 0 15px rgba(124, 58, 237, 0.3); }
+    .step-3 .insight { border-left-color: var(--accent-3); }
 
-    .step-4 .timeline-progress, .step-4 .step-dot { border-color: var(--accent-2); box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
-    .step-4 .insight { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent); border-left-color: var(--accent-2); }
-    .step-4 .insight-title { color: var(--accent-2); }
+    .step-4 .timeline-progress, .step-4 .step-dot { border-color: var(--accent-2); box-shadow: 0 0 15px rgba(5, 150, 105, 0.3); }
+    .step-4 .insight { border-left-color: var(--accent-2); }
 
-    /* ═══ Footer CTA ═══ */
-    .cta {
-      text-align: center; padding: 100px 24px; position: relative;
-    }
+    .cta { text-align: center; padding: 80px 24px; position: relative; }
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
-      background: var(--brand); color: white; text-decoration: none;
-      padding: 18px 40px; border-radius: 99px; font-family: var(--font-display);
-      font-weight: 800; font-size: 18px; transition: 0.3s;
-      box-shadow: 0 10px 25px -5px var(--brand-glow);
+      background: var(--text-main); color: var(--bg); text-decoration: none;
+      padding: 16px 36px; border-radius: 8px; font-family: var(--font-body);
+      font-weight: 600; font-size: 15px; transition: background-color 0.2s;
     }
-    .btn:hover { transform: translateY(-4px); box-shadow: 0 15px 35px -5px rgba(249, 115, 22, 0.6); }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+    .btn:hover { background: #D4D4D8; }
 
     @media (max-width: 768px) {
       .timeline-line, .timeline-progress { left: 24px; }
-      .step { flex-direction: column !important; margin-bottom: 60px; }
+      .step { flex-direction: column !important; margin-bottom: 50px; }
       .step-dot { left: 24px; }
-      .step-content { width: 100%; padding-left: 60px; }
+      .step-content { width: 100%; padding-left: 56px; }
       .card { padding: 24px; }
-      .step-number { font-size: 60px; }
+      .step-number { font-size: 40px; }
     }
   </style>
 </head>
@@ -224,104 +184,109 @@
 
   <nav>
     <a href="/" class="back-btn">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       Voltar ao Dashboard
     </a>
-    <div style="font-family: var(--font-display); font-weight: 800; font-size: 18px;">
-      ITBI<span style="color: var(--brand)">.docs</span>
+    <div style="font-family: var(--font-display); font-weight: 600; font-size: 16px;">
+      ITBI Process
     </div>
   </nav>
 
   <header class="hero">
-    <div class="badge">A Anatomia do Projeto</div>
-    <h1>Como transformamos caos<br>em inteligência de mercado.</h1>
-    <p>Não é magia, é engenharia. Conheça a história de como pegamos dados públicos desorganizados da prefeitura e construímos um radar imobiliário inteligente. Role a página e acompanhe a saga.</p>
+    <div class="badge">Visão Geral do Processo</div>
+    <h1>Construção e Análise Estratégica</h1>
+    <p>Entenda as etapas fundamentais do projeto. Da estruturação dos dados brutos públicos à implementação da arquitetura analítica focada no mercado imobiliário.</p>
   </header>
 
   <main class="journey">
     <div class="timeline-line"></div>
     <div class="timeline-progress" id="progress"></div>
 
-    <!-- PASSO 1 -->
     <div class="step step-1">
       <div class="step-dot"></div>
       <div class="step-content">
         <div class="card">
           <div class="step-number">01</div>
-          <div class="card-icon">🌋</div>
-          <h2>O Velho Oeste dos Dados</h2>
-          <p>Tudo começou com o portal da SEFIN. Baixamos mais de 100.000 transações de imóveis. O cenário? Nomes de bairros esquisitos, letras quebradas, colunas tortas e GPS indicando imóveis afundados no meio do oceano Atlântico.</p>
+          <div class="card-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          </div>
+          <h2>Coleta e Avaliação da Base de Dados</h2>
+          <p>O processo iniciou com a extração de dados públicos do portal da SEFIN. A base continha mais de 100.000 registros históricos de transações, mas apresentava inconsistências críticas de formatação, acentuação corrompida e coordenadas geográficas imprecisas.</p>
           <div class="insight">
-            <div class="insight-title">Perspectiva de Negócio</div>
-            <div class="insight-text">Dados gratuitos são poderosos, mas vêm como petróleo bruto. Sem refinamento, são inúteis para tomada de decisão gerencial.</div>
+            <div class="insight-title">Foco em Gestão</div>
+            <div class="insight-text">Dados abertos são o ponto de partida, mas a ausência de padronização impede análises precisas. A validação inicial evita erros estruturais na tomada de decisão gerencial.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PASSO 2 -->
     <div class="step step-2">
       <div class="step-dot"></div>
       <div class="step-content">
         <div class="card">
           <div class="step-number">02</div>
-          <div class="card-icon">🤖</div>
-          <h2>O Robô da Faxina (ETL)</h2>
-          <p>Para não enlouquecer corrigindo planilhas à mão, criamos um script (robô) em Python. Em segundos, ele leu a tabela, arrumou os acentos, consertou o mapa e — a cereja do bolo — calculou métricas novas que a prefeitura não fornecia, como o famigerado Valor do M².</p>
+          <div class="card-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <h2>Processamento e Tratamento (ETL)</h2>
+          <p>Implementamos rotinas de automação em Python para higienizar a tabela. O script padronizou terminologias de bairros e realizou o cálculo de indicadores secundários cruciais que não estavam presentes na base original, como o Valor do Metro Quadrado.</p>
           <div class="insight">
-            <div class="insight-title">Perspectiva de Negócio</div>
-            <div class="insight-text">Velocidade e Precisão. O que levaria anos de trabalho manual de estagiários foi feito em 4 segundos pelo algoritmo.</div>
+            <div class="insight-title">Foco em Gestão</div>
+            <div class="insight-text">A automação do processo de limpeza (ETL) garante agilidade e escalabilidade, transformando dados brutos em métricas padronizadas prontas para análise financeira.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PASSO 3 -->
     <div class="step step-3">
       <div class="step-dot"></div>
       <div class="step-content">
         <div class="card">
           <div class="step-number">03</div>
-          <div class="card-icon">🧠</div>
-          <h2>A Mágica da Estatística (KNN)</h2>
-          <p>A crise: 15% das vendas não tinham o tamanho do terreno anotado. Deletar? Nunca (perderíamos milhões na análise). Usamos Inteligência Artificial (KNN): o sistema olhava as 5 casas mais parecidas no mesmo bairro e estimava a área vazia de forma cirúrgica.</p>
+          <div class="card-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <h2>Tratamento Preditivo (Modelo KNN)</h2>
+          <p>Identificamos que 15% das amostras careciam de informações essenciais, como a área do terreno. Para preservar o volume financeiro do estudo, aplicamos o algoritmo K-Nearest Neighbors (KNN), que utiliza correlação matemática para estimar os valores ausentes baseado nos perfis dos imóveis mais semelhantes.</p>
           <div class="insight">
-            <div class="insight-title">Perspectiva de Negócio</div>
-            <div class="insight-text">Preservar o histórico de mercado é vital. Salvar as amostras com machine learning garante que a análise de VGV (Valor Geral de Vendas) reflita a realidade.</div>
+            <div class="insight-title">Foco em Gestão</div>
+            <div class="insight-text">A exclusão de dados incompletos comprometeria a realidade do faturamento municipal. O uso de modelagem estatística mantém a integridade do Volume Geral de Vendas (VGV) no relatório.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PASSO 4 -->
     <div class="step step-4">
       <div class="step-dot"></div>
       <div class="step-content">
         <div class="card">
           <div class="step-number">04</div>
-          <div class="card-icon">🎯</div>
-          <h2>Inteligência na Tela</h2>
-          <p>Com a base perfeita, fomos desenhar o Dashboard. Em vez de telas estáticas, fizemos tudo reativo. Descobrimos a Regra de Pareto (quais bairros concentram 80% do dinheiro) e criamos um Filtro Universal: clicou num bairro, todos os gráficos dançam ao mesmo tempo.</p>
+          <div class="card-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <h2>Estruturação do Painel Analítico</h2>
+          <p>A camada visual do projeto foi desenhada para resposta instantânea. Adicionamos lógica de filtros globais e aplicamos o princípio de Pareto para evidenciar quais bairros específicos concentram a maior proporção do capital imobiliário movimentado.</p>
           <div class="insight">
-            <div class="insight-title">Perspectiva de Negócio</div>
-            <div class="insight-text">O diretor ganha um "Simulador de Cenários". Em segundos, durante uma reunião, ele sabe exatamente para onde direcionar a equipe de vendas.</div>
+            <div class="insight-title">Foco em Gestão</div>
+            <div class="insight-text">Painéis estáticos são limitados. Um dashboard reativo permite que a liderança simule recortes de mercado durante reuniões estratégicas para direcionar planos de ação.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PASSO 5 -->
     <div class="step step-1">
       <div class="step-dot"></div>
       <div class="step-content">
         <div class="card">
           <div class="step-number">05</div>
-          <div class="card-icon">⚡</div>
-          <h2>Pair Programming com IA</h2>
-          <p>Não construímos o painel sozinhos. Tivemos Agentes Autônomos (Claude e Antigravity) programando ao nosso lado. Eles digitaram código, desvendaram bugs complexos no servidor e otimizaram a estética da interface para ficar com esse nível de qualidade visual.</p>
+          <div class="card-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <h2>Desenvolvimento Assistido (IA)</h2>
+          <p>A execução do código e a revisão da infraestrutura contaram com o suporte de inteligência artificial aplicada. O processo de Pair Programming agilizou o desenvolvimento dos componentes visuais e a resolução de inconsistências técnicas de arquitetura de software.</p>
           <div class="insight">
-            <div class="insight-title">Perspectiva de Negócio</div>
-            <div class="insight-text">Multiplicador de Força. Trabalhar em sincronia com IA reduziu o tempo de lançamento de meses para meros dias de trabalho intenso.</div>
+            <div class="insight-title">Foco em Gestão</div>
+            <div class="insight-text">Ferramentas de IA no fluxo de desenvolvimento aumentam exponencialmente a produtividade, encurtando o tempo entre o planejamento do projeto e sua implantação final.</div>
           </div>
         </div>
       </div>
@@ -330,13 +295,11 @@
   </main>
 
   <div class="cta">
-    <h2 style="font-family: var(--font-display); font-size: 32px; margin-bottom: 24px;">Pronto para explorar o mercado?</h2>
-    <a href="/" class="btn">Acessar o Painel Interativo</a>
+    <h2 style="font-family: var(--font-display); font-size: 28px; margin-bottom: 24px; font-weight: 600;">Consulte as análises consolidadas</h2>
+    <a href="/" class="btn">Retornar ao Painel</a>
   </div>
 
-  <!-- Scripts para animação de scroll e efeito de mouse nos cards -->
   <script>
-    // Intersection Observer para animar a entrada dos steps
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -347,23 +310,11 @@
 
     document.querySelectorAll('.step').forEach(step => observer.observe(step));
 
-    // Animar a linha de progresso
     window.addEventListener('scroll', () => {
       const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       const scrolled = (winScroll / height) * 100;
       document.getElementById('progress').style.height = scrolled + '%';
-    });
-
-    // Efeito de brilho acompanhando o mouse nos cards
-    document.querySelectorAll('.card').forEach(card => {
-      card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-      });
     });
   </script>
 </body>
