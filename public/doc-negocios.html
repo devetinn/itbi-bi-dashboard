@@ -3,333 +3,366 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mapa Mental do Projeto — Para Equipe de Administração</title>
-  <meta name="description" content="Entenda toda a lógica do projeto do início ao fim de forma visual." />
-
+  <title>A Jornada dos Dados — Por Trás do ITBI</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --bg: #F8FAFC;
-      --surface: #FFFFFF;
-      --text-main: #0F172A;
-      --text-muted: #475569;
-      --brand: #F15A22;
-      --brand-hover: #C04617;
-      --line: #CBD5E1;
-      --accent: #0EA5E9;
-      --font-title: 'Archivo', sans-serif;
-      --font-text: 'Inter', sans-serif;
+      --bg: #030712;
+      --surface: #111827;
+      --surface-glass: rgba(17, 24, 39, 0.7);
+      --text-main: #F9FAFB;
+      --text-muted: #9CA3AF;
+      
+      --brand: #F97316; /* Laranja vibrante */
+      --brand-glow: rgba(249, 115, 22, 0.4);
+      --accent-1: #3B82F6; /* Azul */
+      --accent-2: #10B981; /* Verde */
+      --accent-3: #8B5CF6; /* Roxo */
+      
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font-text); background: var(--bg); color: var(--text-main); line-height: 1.6; }
-    
-    header { background: var(--surface); padding: 24px; border-bottom: 1px solid var(--line); text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    h1 { font-family: var(--font-title); font-weight: 900; font-size: 28px; margin-bottom: 8px; }
-    p.subtitle { color: var(--text-muted); font-size: 16px; max-width: 600px; margin: 0 auto; }
-
-    .nav-back { position: absolute; left: 24px; top: 32px; color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 14px; }
-    .nav-back:hover { color: var(--brand); }
-
-    main { max-width: 900px; margin: 60px auto; padding: 0 24px; }
-
-    /* ═══ Tree / Mind Map CSS ═══ */
-    .mindmap {
-      padding-left: 20px;
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body); background: var(--bg); color: var(--text-main);
+      line-height: 1.6; overflow-x: hidden;
     }
-    
-    details {
-      margin-bottom: 16px;
+
+    /* ═══ Background Pattern ═══ */
+    .bg-pattern {
+      position: fixed; inset: 0; z-index: -1;
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(249, 115, 22, 0.08), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.08), transparent 25%);
+      background-size: cover;
+    }
+
+    /* ═══ Navegação ═══ */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: var(--surface-glass); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .back-btn {
+      color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 14px;
+      display: flex; align-items: center; gap: 8px; transition: 0.3s;
+    }
+    .back-btn:hover { color: var(--text-main); transform: translateX(-4px); }
+
+    /* ═══ Hero Section ═══ */
+    .hero {
+      min-height: 80vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 100px 24px 60px; position: relative;
+    }
+    .badge {
+      display: inline-block; padding: 8px 16px; border-radius: 99px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+      margin-bottom: 24px; color: var(--brand);
+      animation: float 4s ease-in-out infinite;
+    }
+    .hero h1 {
+      font-family: var(--font-display); font-size: clamp(3rem, 8vw, 5rem); font-weight: 900;
+      line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #FFFFFF 0%, #9CA3AF 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: clamp(1rem, 3vw, 1.25rem); color: var(--text-muted); max-width: 700px;
+    }
+
+    /* ═══ A Jornada (Timeline) ═══ */
+    .journey {
+      max-width: 1000px; margin: 0 auto; padding: 0 24px 100px;
       position: relative;
     }
-
-    /* Linhas verticais do mapa mental */
-    details::before {
-      content: '';
-      position: absolute;
-      left: 24px;
-      top: 50px;
-      bottom: -16px;
-      width: 3px;
-      background: var(--line);
-      z-index: 0;
-      border-radius: 4px;
-    }
-    details:last-child::before { display: none; }
     
-    summary {
-      display: flex;
-      align-items: center;
-      list-style: none;
-      cursor: pointer;
-      background: var(--surface);
-      border: 2px solid var(--line);
-      border-radius: 12px;
-      padding: 16px 24px;
-      font-family: var(--font-title);
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--text-main);
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-      transition: all 0.2s;
-      position: relative;
-      z-index: 1;
+    /* Linha central da jornada */
+    .timeline-line {
+      position: absolute; left: 50%; top: 0; bottom: 0; width: 4px;
+      background: linear-gradient(to bottom, var(--brand), var(--accent-1), var(--accent-3));
+      transform: translateX(-50%); border-radius: 4px;
+      opacity: 0.2;
     }
+    .timeline-progress {
+      position: absolute; left: 50%; top: 0; width: 4px;
+      background: linear-gradient(to bottom, var(--brand), var(--accent-1), var(--accent-3));
+      transform: translateX(-50%); border-radius: 4px;
+      box-shadow: 0 0 20px var(--brand);
+      transition: height 0.1s;
+    }
+
+    .step {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 120px; position: relative; width: 100%;
+      opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .step.visible { opacity: 1; transform: translateY(0); }
     
-    summary::-webkit-details-marker { display: none; }
-    
-    summary:hover {
-      border-color: var(--brand);
-      transform: translateX(4px);
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    .step:nth-child(odd) { flex-direction: row-reverse; }
+
+    /* Ponto no meio */
+    .step-dot {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: 24px; height: 24px; border-radius: 50%; background: var(--bg);
+      border: 4px solid var(--brand); z-index: 2; transition: 0.4s;
     }
-    
-    details[open] > summary {
-      border-color: var(--brand);
-      background: var(--brand);
-      color: white;
+    .step.visible .step-dot { box-shadow: 0 0 30px var(--brand-glow); }
+
+    .step-content {
+      width: 45%; position: relative;
+      perspective: 1000px;
     }
 
-    .icon {
-      width: 40px; height: 40px; border-radius: 8px; background: rgba(241, 90, 34, 0.1);
-      color: var(--brand); display: flex; align-items: center; justify-content: center;
-      font-size: 20px; margin-right: 16px; transition: 0.2s;
-    }
-    details[open] > summary .icon { background: rgba(255,255,255,0.2); color: white; }
-
-    .chevron {
-      margin-left: auto; font-size: 24px; transition: transform 0.3s;
-    }
-    details[open] > summary .chevron { transform: rotate(180deg); }
-
-    /* Conteúdo filho */
-    .branch-content {
-      padding: 24px 0 16px 56px;
-      animation: slideDown 0.3s ease-out;
-    }
-
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .sub-item {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
-      position: relative;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    /* Cards interactivos */
+    .card {
+      background: var(--surface-glass); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 24px;
+      padding: 40px; position: relative; overflow: hidden;
+      transition: all 0.4s ease; transform-style: preserve-3d;
     }
     
-    /* Conector horizontal para o sub-item */
-    .sub-item::before {
-      content: '';
-      position: absolute;
-      left: -32px;
-      top: 40px;
-      width: 32px;
-      height: 3px;
-      background: var(--line);
-      border-radius: 4px;
+    .step:hover .card {
+      transform: translateY(-8px) rotateX(2deg) rotateY(2deg);
+      border-color: rgba(255,255,255,0.2);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
 
-    .sub-title {
-      font-family: var(--font-title);
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--accent);
-      margin-bottom: 8px;
+    /* Brilho no hover do card */
+    .card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
+      opacity: 0; transition: opacity 0.3s; z-index: 0; pointer-events: none;
     }
-    .sub-text {
-      color: var(--text-muted);
-      font-size: 15px;
-    }
-    
-    .business-focus {
-      margin-top: 12px;
-      background: #F0F9FF;
-      border-left: 4px solid var(--accent);
-      padding: 12px 16px;
-      border-radius: 0 8px 8px 0;
-      font-size: 14px;
-      color: #0369A1;
+    .card:hover::before { opacity: 1; }
+
+    .card > * { position: relative; z-index: 1; }
+
+    .step-number {
+      font-family: var(--font-display); font-size: 80px; font-weight: 900;
+      position: absolute; top: -10px; right: 20px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      user-select: none; pointer-events: none;
     }
 
-    .instruction {
-      text-align: center; margin-bottom: 40px; font-weight: 600; color: var(--brand);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 0.6; }
-      50% { opacity: 1; }
-      100% { opacity: 0.6; }
+    .card-icon {
+      font-size: 32px; margin-bottom: 24px; display: inline-block;
+      padding: 16px; border-radius: 16px; background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
     }
 
-    @media (max-width: 600px) {
-      .nav-back { position: static; display: block; margin-bottom: 16px; }
-      summary { font-size: 16px; padding: 12px 16px; }
-      .icon { width: 32px; height: 32px; font-size: 16px; margin-right: 12px; }
-      details::before { left: 16px; }
-      .branch-content { padding-left: 32px; }
-      .sub-item::before { left: -16px; width: 16px; }
+    .card h2 {
+      font-family: var(--font-display); font-size: 28px; font-weight: 800;
+      margin-bottom: 16px; line-height: 1.2;
+    }
+    .card p { font-size: 16px; color: var(--text-muted); margin-bottom: 24px; }
+
+    /* Bloco de "Visão de Negócio" (Insight) */
+    .insight {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(249, 115, 22, 0.02));
+      border-left: 3px solid var(--brand); padding: 16px 20px; border-radius: 0 12px 12px 0;
+    }
+    .insight-title {
+      font-family: var(--font-display); font-size: 12px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--brand); margin-bottom: 4px; font-weight: 800;
+    }
+    .insight-text { font-size: 14px; color: var(--text-main); font-weight: 500; }
+
+    /* Cores personalizadas por step */
+    .step-2 .timeline-progress, .step-2 .step-dot { border-color: var(--accent-1); box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); }
+    .step-2 .insight { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent); border-left-color: var(--accent-1); }
+    .step-2 .insight-title { color: var(--accent-1); }
+
+    .step-3 .timeline-progress, .step-3 .step-dot { border-color: var(--accent-3); box-shadow: 0 0 30px rgba(139, 92, 246, 0.4); }
+    .step-3 .insight { background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), transparent); border-left-color: var(--accent-3); }
+    .step-3 .insight-title { color: var(--accent-3); }
+
+    .step-4 .timeline-progress, .step-4 .step-dot { border-color: var(--accent-2); box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
+    .step-4 .insight { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent); border-left-color: var(--accent-2); }
+    .step-4 .insight-title { color: var(--accent-2); }
+
+    /* ═══ Footer CTA ═══ */
+    .cta {
+      text-align: center; padding: 100px 24px; position: relative;
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--brand); color: white; text-decoration: none;
+      padding: 18px 40px; border-radius: 99px; font-family: var(--font-display);
+      font-weight: 800; font-size: 18px; transition: 0.3s;
+      box-shadow: 0 10px 25px -5px var(--brand-glow);
+    }
+    .btn:hover { transform: translateY(-4px); box-shadow: 0 15px 35px -5px rgba(249, 115, 22, 0.6); }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @media (max-width: 768px) {
+      .timeline-line, .timeline-progress { left: 24px; }
+      .step { flex-direction: column !important; margin-bottom: 60px; }
+      .step-dot { left: 24px; }
+      .step-content { width: 100%; padding-left: 60px; }
+      .card { padding: 24px; }
+      .step-number { font-size: 60px; }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <a href="/" class="nav-back">← Voltar ao App</a>
-    <h1>A Lógica do Projeto</h1>
-    <p class="subtitle">Entenda passo a passo como construímos o painel. Um mapa mental projetado para a equipe de Administração de Negócios.</p>
+  <div class="bg-pattern"></div>
+
+  <nav>
+    <a href="/" class="back-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Voltar ao Dashboard
+    </a>
+    <div style="font-family: var(--font-display); font-weight: 800; font-size: 18px;">
+      ITBI<span style="color: var(--brand)">.docs</span>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="badge">A Anatomia do Projeto</div>
+    <h1>Como transformamos caos<br>em inteligência de mercado.</h1>
+    <p>Não é magia, é engenharia. Conheça a história de como pegamos dados públicos desorganizados da prefeitura e construímos um radar imobiliário inteligente. Role a página e acompanhe a saga.</p>
   </header>
 
-  <main>
-    <div class="instruction">👇 Clique nas caixas abaixo para expandir e entender cada etapa do processo</div>
+  <main class="journey">
+    <div class="timeline-line"></div>
+    <div class="timeline-progress" id="progress"></div>
 
-    <div class="mindmap">
-      
-      <!-- ETAPA 1 -->
-      <details>
-        <summary>
-          <div class="icon">📥</div>
-          1. A Coleta de Dados Brutos
-          <div class="chevron">▼</div>
-        </summary>
-        <div class="branch-content">
-          <div class="sub-item">
-            <div class="sub-title">A Busca no Portal da Prefeitura</div>
-            <div class="sub-text">Fomos ao portal de dados abertos da SEFIN (Fortaleza) e baixamos uma planilha gigante com todas as transações imobiliárias registradas desde 1996.</div>
-            <div class="business-focus"><strong>Visão de Negócio:</strong> Dados públicos são gratuitos e valiosos, mas vêm "crus" e difíceis de interpretar sem tecnologia.</div>
-          </div>
-          <div class="sub-item">
-            <div class="sub-title">O Problema Incial</div>
-            <div class="sub-text">A planilha tinha cerca de 100 mil registros, mas estava uma bagunça: nomes de bairros com acentos quebrados, números fora de formato e informações vazias. O Excel comum travaria ao tentar abrir isso corretamente.</div>
+    <!-- PASSO 1 -->
+    <div class="step step-1">
+      <div class="step-dot"></div>
+      <div class="step-content">
+        <div class="card">
+          <div class="step-number">01</div>
+          <div class="card-icon">🌋</div>
+          <h2>O Velho Oeste dos Dados</h2>
+          <p>Tudo começou com o portal da SEFIN. Baixamos mais de 100.000 transações de imóveis. O cenário? Nomes de bairros esquisitos, letras quebradas, colunas tortas e GPS indicando imóveis afundados no meio do oceano Atlântico.</p>
+          <div class="insight">
+            <div class="insight-title">Perspectiva de Negócio</div>
+            <div class="insight-text">Dados gratuitos são poderosos, mas vêm como petróleo bruto. Sem refinamento, são inúteis para tomada de decisão gerencial.</div>
           </div>
         </div>
-      </details>
-
-      <!-- ETAPA 2 -->
-      <details>
-        <summary>
-          <div class="icon">🧹</div>
-          2. A Limpeza e Organização (ETL)
-          <div class="chevron">▼</div>
-        </summary>
-        <div class="branch-content">
-          <div class="sub-item">
-            <div class="sub-title">O Robô Faxineiro (Python)</div>
-            <div class="sub-text">Construímos um script de programação (usando Python) que age como um funil mágico. Ele engole a planilha suja e cospe uma planilha limpa em questão de segundos.</div>
-          </div>
-          <div class="sub-item">
-            <div class="sub-title">Criando Novos Indicadores</div>
-            <div class="sub-text">A prefeitura não nos dizia o valor do Metro Quadrado ou a Idade do Imóvel. Nosso script foi programado para calcular isso automaticamente, dividindo o valor de venda pela área.</div>
-            <div class="business-focus"><strong>Visão de Negócio:</strong> Transformamos dados básicos em "Kpis" (Indicadores Chave de Performance) que um gestor imobiliário realmente precisa ver.</div>
-          </div>
-        </div>
-      </details>
-
-      <!-- ETAPA 3 -->
-      <details>
-        <summary>
-          <div class="icon">🤖</div>
-          3. Soluções Inteligentes para Dados Faltantes
-          <div class="chevron">▼</div>
-        </summary>
-        <div class="branch-content">
-          <div class="sub-item">
-            <div class="sub-title">O Problema dos Dados em Branco</div>
-            <div class="sub-text">Descobrimos que 15% das vendas não tinham o tamanho da área do terreno anotado. Se a gente apagasse essas vendas, estaríamos jogando milhões de reais fora do nosso relatório de mercado.</div>
-          </div>
-          <div class="sub-item">
-            <div class="sub-title">O Método dos Vizinhos (KNN - Machine Learning)</div>
-            <div class="sub-text">Usamos Matemática Avançada/IA. Dissemos para o sistema: "Pegue a casa que está com a área em branco, ache as 5 casas mais parecidas com ela na mesma região e mesmo preço, e tire uma média". Assim, salvamos as vendas com estimativas altamente precisas.</div>
-            <div class="business-focus"><strong>Visão de Negócio:</strong> Preservação do histórico de mercado. Uma análise financeira não pode simplesmente deletar 15% das vendas; ela precisa estimar lacunas com inteligência.</div>
-          </div>
-          <div class="sub-item">
-            <div class="sub-title">O Desafio do Mapa</div>
-            <div class="sub-text">As coordenadas de GPS dos imóveis estavam corrompidas, fazendo com que casas aparecessem no meio do mar no mapa. Solução: descartamos o GPS quebrado e conectamos os nomes dos bairros com os desenhos (polígonos) oficiais do mapa de Fortaleza.</div>
-          </div>
-        </div>
-      </details>
-
-      <!-- ETAPA 4 -->
-      <details>
-        <summary>
-          <div class="icon">📊</div>
-          4. Regras de Negócios no Painel Visual
-          <div class="chevron">▼</div>
-        </summary>
-        <div class="branch-content">
-          <div class="sub-item">
-            <div class="sub-title">Filtros Cruzados Universais</div>
-            <div class="sub-text">Construímos uma arquitetura onde todas as partes do painel conversam entre si. Se você clica em "Apartamentos", todo o mapa e todos os gráficos se atualizam na mesma hora, sem recarregar a página.</div>
-            <div class="business-focus"><strong>Visão de Negócio:</strong> Permite que a equipe de gestão faça simulações durante uma reunião de diretoria em tempo real.</div>
-          </div>
-          <div class="sub-item">
-            <div class="sub-title">A Regra de Pareto (Concentração 80/20)</div>
-            <div class="sub-text">Adicionamos um algoritmo que aponta automaticamente quais são os seletos bairros que, juntos, somam 80% de todo o dinheiro do mercado imobiliário da cidade.</div>
-            <div class="business-focus"><strong>Visão de Negócio:</strong> Foco de recursos. Ensina aos corretores e investidores onde eles devem focar seu tempo, sem se espalhar por 121 bairros.</div>
-          </div>
-          <div class="sub-item">
-            <div class="sub-title">Sazonalidade do Mercado</div>
-            <div class="sub-text">Fizemos um mapa de calor indicando quais meses do ano historicamente registram mais vendas.</div>
-          </div>
-        </div>
-      </details>
-
-      <!-- ETAPA 5 -->
-      <details>
-        <summary>
-          <div class="icon">🚀</div>
-          5. A Mão da Inteligência Artificial
-          <div class="chevron">▼</div>
-        </summary>
-        <div class="branch-content">
-          <div class="sub-item">
-            <div class="sub-title">Nossos Co-Pilotos (Claude Code e Antigravity)</div>
-            <div class="sub-text">Todo este projeto levou uma fração do tempo normal para ser construído porque programamos junto com Agentes de Inteligência Artificial.</div>
-          </div>
-          <div class="sub-item">
-            <div class="sub-title">Como eles ajudaram?</div>
-            <div class="sub-text">Eles agiram como "digitadores de luxo" e "revisores implacáveis". Quando havia um erro difícil de encontrar nos dados (como um erro invisível lendo o arquivo latino da prefeitura), a IA descobria a solução em segundos. Eles nos ajudaram a construir os gráficos muito mais rápido.</div>
-          </div>
-        </div>
-      </details>
-
-      <!-- ETAPA 6 -->
-      <details>
-        <summary>
-          <div class="icon">🌐</div>
-          6. O Produto Final na Nuvem
-          <div class="chevron">▼</div>
-        </summary>
-        <div class="branch-content">
-          <div class="sub-item">
-            <div class="sub-title">Hospedagem Automática (Vercel)</div>
-            <div class="sub-text">Não precisamos comprar servidores caros. Colocamos o sistema inteiro em uma nuvem pública chamada Vercel. Assim, qualquer pessoa no mundo pode acessar o link e o painel abre na hora, rápido e seguro.</div>
-            <div class="business-focus"><strong>Visão de Negócio:</strong> Redução de custos de TI e alta disponibilidade para entregar o resultado do projeto.</div>
-          </div>
-        </div>
-      </details>
-
+      </div>
     </div>
+
+    <!-- PASSO 2 -->
+    <div class="step step-2">
+      <div class="step-dot"></div>
+      <div class="step-content">
+        <div class="card">
+          <div class="step-number">02</div>
+          <div class="card-icon">🤖</div>
+          <h2>O Robô da Faxina (ETL)</h2>
+          <p>Para não enlouquecer corrigindo planilhas à mão, criamos um script (robô) em Python. Em segundos, ele leu a tabela, arrumou os acentos, consertou o mapa e — a cereja do bolo — calculou métricas novas que a prefeitura não fornecia, como o famigerado Valor do M².</p>
+          <div class="insight">
+            <div class="insight-title">Perspectiva de Negócio</div>
+            <div class="insight-text">Velocidade e Precisão. O que levaria anos de trabalho manual de estagiários foi feito em 4 segundos pelo algoritmo.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASSO 3 -->
+    <div class="step step-3">
+      <div class="step-dot"></div>
+      <div class="step-content">
+        <div class="card">
+          <div class="step-number">03</div>
+          <div class="card-icon">🧠</div>
+          <h2>A Mágica da Estatística (KNN)</h2>
+          <p>A crise: 15% das vendas não tinham o tamanho do terreno anotado. Deletar? Nunca (perderíamos milhões na análise). Usamos Inteligência Artificial (KNN): o sistema olhava as 5 casas mais parecidas no mesmo bairro e estimava a área vazia de forma cirúrgica.</p>
+          <div class="insight">
+            <div class="insight-title">Perspectiva de Negócio</div>
+            <div class="insight-text">Preservar o histórico de mercado é vital. Salvar as amostras com machine learning garante que a análise de VGV (Valor Geral de Vendas) reflita a realidade.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASSO 4 -->
+    <div class="step step-4">
+      <div class="step-dot"></div>
+      <div class="step-content">
+        <div class="card">
+          <div class="step-number">04</div>
+          <div class="card-icon">🎯</div>
+          <h2>Inteligência na Tela</h2>
+          <p>Com a base perfeita, fomos desenhar o Dashboard. Em vez de telas estáticas, fizemos tudo reativo. Descobrimos a Regra de Pareto (quais bairros concentram 80% do dinheiro) e criamos um Filtro Universal: clicou num bairro, todos os gráficos dançam ao mesmo tempo.</p>
+          <div class="insight">
+            <div class="insight-title">Perspectiva de Negócio</div>
+            <div class="insight-text">O diretor ganha um "Simulador de Cenários". Em segundos, durante uma reunião, ele sabe exatamente para onde direcionar a equipe de vendas.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASSO 5 -->
+    <div class="step step-1">
+      <div class="step-dot"></div>
+      <div class="step-content">
+        <div class="card">
+          <div class="step-number">05</div>
+          <div class="card-icon">⚡</div>
+          <h2>Pair Programming com IA</h2>
+          <p>Não construímos o painel sozinhos. Tivemos Agentes Autônomos (Claude e Antigravity) programando ao nosso lado. Eles digitaram código, desvendaram bugs complexos no servidor e otimizaram a estética da interface para ficar com esse nível de qualidade visual.</p>
+          <div class="insight">
+            <div class="insight-title">Perspectiva de Negócio</div>
+            <div class="insight-text">Multiplicador de Força. Trabalhar em sincronia com IA reduziu o tempo de lançamento de meses para meros dias de trabalho intenso.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 
+  <div class="cta">
+    <h2 style="font-family: var(--font-display); font-size: 32px; margin-bottom: 24px;">Pronto para explorar o mercado?</h2>
+    <a href="/" class="btn">Acessar o Painel Interativo</a>
+  </div>
+
+  <!-- Scripts para animação de scroll e efeito de mouse nos cards -->
   <script>
-    // Se o usuário clicar em um details, fecha os outros para manter o mapa mental limpo
-    const details = document.querySelectorAll("details");
-    details.forEach((targetDetail) => {
-      targetDetail.addEventListener("click", () => {
-        details.forEach((detail) => {
-          if (detail !== targetDetail) {
-            detail.removeAttribute("open");
-          }
-        });
+    // Intersection Observer para animar a entrada dos steps
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.step').forEach(step => observer.observe(step));
+
+    // Animar a linha de progresso
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('progress').style.height = scrolled + '%';
+    });
+
+    // Efeito de brilho acompanhando o mouse nos cards
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
       });
     });
   </script>
