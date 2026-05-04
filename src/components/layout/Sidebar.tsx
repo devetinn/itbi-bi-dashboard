@@ -226,28 +226,41 @@ export function Sidebar({
             </motion.div>
             <motion.a
               href="/doc-tecnica.html"
-              className="relative z-10 w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors duration-150 group"
+              className="relative z-10 w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors duration-150"
               style={{ fontFamily: 'var(--f-body)', color: 'rgba(255,255,255,0.48)', textDecoration: 'none' }}
-              onMouseEnter={e => e.currentTarget.style.color = '#00A0DC'}
+              onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.78)'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.48)'}
             >
-              <motion.span className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
-                <span style={{ fontSize: '14px' }}>👨‍💻</span>
+              <motion.span className="flex-shrink-0">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 2.5C4 1.67157 4.67157 1 5.5 1H9.5C9.76522 1 10.0196 1.10536 10.2071 1.29289L13.7071 4.79289C13.8946 4.98043 14 5.23478 14 5.5V13.5C14 14.3284 13.3284 15 12.5 15H5.5C4.67157 15 4 14.3284 4 13.5V2.5Z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M10 1V5H14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M7 8H11" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M7 11H9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </motion.span>
-              <span className="tracking-tight">Doc. Técnica (Devs)</span>
+              <span className="tracking-tight">Doc. Técnica</span>
             </motion.a>
             
             <motion.a
               href="/doc-negocios.html"
-              className="relative z-10 w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors duration-150 group"
+              className="relative z-10 w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors duration-150"
               style={{ fontFamily: 'var(--f-body)', color: 'rgba(255,255,255,0.48)', textDecoration: 'none', marginTop: '2px' }}
-              onMouseEnter={e => e.currentTarget.style.color = '#F15A22'}
+              onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.78)'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.48)'}
             >
-              <motion.span className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
-                <span style={{ fontSize: '14px' }}>🗺️</span>
+              <motion.span className="flex-shrink-0">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.4"/>
+                  <circle cx="3" cy="4" r="1.5" stroke="currentColor" strokeWidth="1.4"/>
+                  <circle cx="13" cy="4" r="1.5" stroke="currentColor" strokeWidth="1.4"/>
+                  <circle cx="8" cy="14" r="1.5" stroke="currentColor" strokeWidth="1.4"/>
+                  <path d="M4.5 5L6.5 6.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                  <path d="M11.5 5L9.5 6.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                  <path d="M8 12.5V10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                </svg>
               </motion.span>
-              <span className="tracking-tight">Mapa Mental (Equipe)</span>
+              <span className="tracking-tight">Mapa Mental</span>
             </motion.a>
           </div>
         </nav>
