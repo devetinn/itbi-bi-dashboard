@@ -225,24 +225,29 @@ export function Sidebar({
               Documentação
             </motion.div>
             <motion.a
-              href="/processo.html"
+              href="/doc-tecnica.html"
               className="relative z-10 w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors duration-150 group"
-              style={{
-                fontFamily: 'var(--f-body)',
-                color: 'rgba(255,255,255,0.48)',
-                textDecoration: 'none'
-              }}
+              style={{ fontFamily: 'var(--f-body)', color: 'rgba(255,255,255,0.48)', textDecoration: 'none' }}
+              onMouseEnter={e => e.currentTarget.style.color = '#00A0DC'}
+              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.48)'}
+            >
+              <motion.span className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
+                <span style={{ fontSize: '14px' }}>👨‍💻</span>
+              </motion.span>
+              <span className="tracking-tight">Doc. Técnica (Devs)</span>
+            </motion.a>
+            
+            <motion.a
+              href="/doc-negocios.html"
+              className="relative z-10 w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors duration-150 group"
+              style={{ fontFamily: 'var(--f-body)', color: 'rgba(255,255,255,0.48)', textDecoration: 'none', marginTop: '2px' }}
               onMouseEnter={e => e.currentTarget.style.color = '#F15A22'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.48)'}
             >
               <motion.span className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M4 3.5C4 2.67157 4.67157 2 5.5 2H10.5C11.3284 2 12 2.67157 12 3.5V12.5C12 13.3284 11.3284 14 10.5 14H5.5C4.67157 14 4 13.3284 4 12.5V3.5Z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M6 5.5H10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-                  <path d="M6 8.5H8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-                </svg>
+                <span style={{ fontSize: '14px' }}>🗺️</span>
               </motion.span>
-              <span className="tracking-tight">Processo e IA</span>
+              <span className="tracking-tight">Mapa Mental (Equipe)</span>
             </motion.a>
           </div>
         </nav>

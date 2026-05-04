@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapa Mental do Projeto — Para Equipe de Administração</title>
+  <meta name="description" content="Entenda toda a lógica do projeto do início ao fim de forma visual." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --brand: #F15A22;
+      --brand-hover: #C04617;
+      --line: #CBD5E1;
+      --accent: #0EA5E9;
+      --font-title: 'Archivo', sans-serif;
+      --font-text: 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-text); background: var(--bg); color: var(--text-main); line-height: 1.6; }
+    
+    header { background: var(--surface); padding: 24px; border-bottom: 1px solid var(--line); text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    h1 { font-family: var(--font-title); font-weight: 900; font-size: 28px; margin-bottom: 8px; }
+    p.subtitle { color: var(--text-muted); font-size: 16px; max-width: 600px; margin: 0 auto; }
+
+    .nav-back { position: absolute; left: 24px; top: 32px; color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 14px; }
+    .nav-back:hover { color: var(--brand); }
+
+    main { max-width: 900px; margin: 60px auto; padding: 0 24px; }
+
+    /* ═══ Tree / Mind Map CSS ═══ */
+    .mindmap {
+      padding-left: 20px;
+    }
+    
+    details {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    /* Linhas verticais do mapa mental */
+    details::before {
+      content: '';
+      position: absolute;
+      left: 24px;
+      top: 50px;
+      bottom: -16px;
+      width: 3px;
+      background: var(--line);
+      z-index: 0;
+      border-radius: 4px;
+    }
+    details:last-child::before { display: none; }
+    
+    summary {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      cursor: pointer;
+      background: var(--surface);
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      padding: 16px 24px;
+      font-family: var(--font-title);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      transition: all 0.2s;
+      position: relative;
+      z-index: 1;
+    }
+    
+    summary::-webkit-details-marker { display: none; }
+    
+    summary:hover {
+      border-color: var(--brand);
+      transform: translateX(4px);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+    
+    details[open] > summary {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: white;
+    }
+
+    .icon {
+      width: 40px; height: 40px; border-radius: 8px; background: rgba(241, 90, 34, 0.1);
+      color: var(--brand); display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-right: 16px; transition: 0.2s;
+    }
+    details[open] > summary .icon { background: rgba(255,255,255,0.2); color: white; }
+
+    .chevron {
+      margin-left: auto; font-size: 24px; transition: transform 0.3s;
+    }
+    details[open] > summary .chevron { transform: rotate(180deg); }
+
+    /* Conteúdo filho */
+    .branch-content {
+      padding: 24px 0 16px 56px;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sub-item {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    
+    /* Conector horizontal para o sub-item */
+    .sub-item::before {
+      content: '';
+      position: absolute;
+      left: -32px;
+      top: 40px;
+      width: 32px;
+      height: 3px;
+      background: var(--line);
+      border-radius: 4px;
+    }
+
+    .sub-title {
+      font-family: var(--font-title);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .sub-text {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+    
+    .business-focus {
+      margin-top: 12px;
+      background: #F0F9FF;
+      border-left: 4px solid var(--accent);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: #0369A1;
+    }
+
+    .instruction {
+      text-align: center; margin-bottom: 40px; font-weight: 600; color: var(--brand);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+    @media (max-width: 600px) {
+      .nav-back { position: static; display: block; margin-bottom: 16px; }
+      summary { font-size: 16px; padding: 12px 16px; }
+      .icon { width: 32px; height: 32px; font-size: 16px; margin-right: 12px; }
+      details::before { left: 16px; }
+      .branch-content { padding-left: 32px; }
+      .sub-item::before { left: -16px; width: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="nav-back">← Voltar ao App</a>
+    <h1>A Lógica do Projeto</h1>
+    <p class="subtitle">Entenda passo a passo como construímos o painel. Um mapa mental projetado para a equipe de Administração de Negócios.</p>
+  </header>
+
+  <main>
+    <div class="instruction">👇 Clique nas caixas abaixo para expandir e entender cada etapa do processo</div>
+
+    <div class="mindmap">
+      
+      <!-- ETAPA 1 -->
+      <details>
+        <summary>
+          <div class="icon">📥</div>
+          1. A Coleta de Dados Brutos
+          <div class="chevron">▼</div>
+        </summary>
+        <div class="branch-content">
+          <div class="sub-item">
+            <div class="sub-title">A Busca no Portal da Prefeitura</div>
+            <div class="sub-text">Fomos ao portal de dados abertos da SEFIN (Fortaleza) e baixamos uma planilha gigante com todas as transações imobiliárias registradas desde 1996.</div>
+            <div class="business-focus"><strong>Visão de Negócio:</strong> Dados públicos são gratuitos e valiosos, mas vêm "crus" e difíceis de interpretar sem tecnologia.</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-title">O Problema Incial</div>
+            <div class="sub-text">A planilha tinha cerca de 100 mil registros, mas estava uma bagunça: nomes de bairros com acentos quebrados, números fora de formato e informações vazias. O Excel comum travaria ao tentar abrir isso corretamente.</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- ETAPA 2 -->
+      <details>
+        <summary>
+          <div class="icon">🧹</div>
+          2. A Limpeza e Organização (ETL)
+          <div class="chevron">▼</div>
+        </summary>
+        <div class="branch-content">
+          <div class="sub-item">
+            <div class="sub-title">O Robô Faxineiro (Python)</div>
+            <div class="sub-text">Construímos um script de programação (usando Python) que age como um funil mágico. Ele engole a planilha suja e cospe uma planilha limpa em questão de segundos.</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-title">Criando Novos Indicadores</div>
+            <div class="sub-text">A prefeitura não nos dizia o valor do Metro Quadrado ou a Idade do Imóvel. Nosso script foi programado para calcular isso automaticamente, dividindo o valor de venda pela área.</div>
+            <div class="business-focus"><strong>Visão de Negócio:</strong> Transformamos dados básicos em "Kpis" (Indicadores Chave de Performance) que um gestor imobiliário realmente precisa ver.</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- ETAPA 3 -->
+      <details>
+        <summary>
+          <div class="icon">🤖</div>
+          3. Soluções Inteligentes para Dados Faltantes
+          <div class="chevron">▼</div>
+        </summary>
+        <div class="branch-content">
+          <div class="sub-item">
+            <div class="sub-title">O Problema dos Dados em Branco</div>
+            <div class="sub-text">Descobrimos que 15% das vendas não tinham o tamanho da área do terreno anotado. Se a gente apagasse essas vendas, estaríamos jogando milhões de reais fora do nosso relatório de mercado.</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-title">O Método dos Vizinhos (KNN - Machine Learning)</div>
+            <div class="sub-text">Usamos Matemática Avançada/IA. Dissemos para o sistema: "Pegue a casa que está com a área em branco, ache as 5 casas mais parecidas com ela na mesma região e mesmo preço, e tire uma média". Assim, salvamos as vendas com estimativas altamente precisas.</div>
+            <div class="business-focus"><strong>Visão de Negócio:</strong> Preservação do histórico de mercado. Uma análise financeira não pode simplesmente deletar 15% das vendas; ela precisa estimar lacunas com inteligência.</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-title">O Desafio do Mapa</div>
+            <div class="sub-text">As coordenadas de GPS dos imóveis estavam corrompidas, fazendo com que casas aparecessem no meio do mar no mapa. Solução: descartamos o GPS quebrado e conectamos os nomes dos bairros com os desenhos (polígonos) oficiais do mapa de Fortaleza.</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- ETAPA 4 -->
+      <details>
+        <summary>
+          <div class="icon">📊</div>
+          4. Regras de Negócios no Painel Visual
+          <div class="chevron">▼</div>
+        </summary>
+        <div class="branch-content">
+          <div class="sub-item">
+            <div class="sub-title">Filtros Cruzados Universais</div>
+            <div class="sub-text">Construímos uma arquitetura onde todas as partes do painel conversam entre si. Se você clica em "Apartamentos", todo o mapa e todos os gráficos se atualizam na mesma hora, sem recarregar a página.</div>
+            <div class="business-focus"><strong>Visão de Negócio:</strong> Permite que a equipe de gestão faça simulações durante uma reunião de diretoria em tempo real.</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-title">A Regra de Pareto (Concentração 80/20)</div>
+            <div class="sub-text">Adicionamos um algoritmo que aponta automaticamente quais são os seletos bairros que, juntos, somam 80% de todo o dinheiro do mercado imobiliário da cidade.</div>
+            <div class="business-focus"><strong>Visão de Negócio:</strong> Foco de recursos. Ensina aos corretores e investidores onde eles devem focar seu tempo, sem se espalhar por 121 bairros.</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-title">Sazonalidade do Mercado</div>
+            <div class="sub-text">Fizemos um mapa de calor indicando quais meses do ano historicamente registram mais vendas.</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- ETAPA 5 -->
+      <details>
+        <summary>
+          <div class="icon">🚀</div>
+          5. A Mão da Inteligência Artificial
+          <div class="chevron">▼</div>
+        </summary>
+        <div class="branch-content">
+          <div class="sub-item">
+            <div class="sub-title">Nossos Co-Pilotos (Claude Code e Antigravity)</div>
+            <div class="sub-text">Todo este projeto levou uma fração do tempo normal para ser construído porque programamos junto com Agentes de Inteligência Artificial.</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-title">Como eles ajudaram?</div>
+            <div class="sub-text">Eles agiram como "digitadores de luxo" e "revisores implacáveis". Quando havia um erro difícil de encontrar nos dados (como um erro invisível lendo o arquivo latino da prefeitura), a IA descobria a solução em segundos. Eles nos ajudaram a construir os gráficos muito mais rápido.</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- ETAPA 6 -->
+      <details>
+        <summary>
+          <div class="icon">🌐</div>
+          6. O Produto Final na Nuvem
+          <div class="chevron">▼</div>
+        </summary>
+        <div class="branch-content">
+          <div class="sub-item">
+            <div class="sub-title">Hospedagem Automática (Vercel)</div>
+            <div class="sub-text">Não precisamos comprar servidores caros. Colocamos o sistema inteiro em uma nuvem pública chamada Vercel. Assim, qualquer pessoa no mundo pode acessar o link e o painel abre na hora, rápido e seguro.</div>
+            <div class="business-focus"><strong>Visão de Negócio:</strong> Redução de custos de TI e alta disponibilidade para entregar o resultado do projeto.</div>
+          </div>
+        </div>
+      </details>
+
+    </div>
+  </main>
+
+  <script>
+    // Se o usuário clicar em um details, fecha os outros para manter o mapa mental limpo
+    const details = document.querySelectorAll("details");
+    details.forEach((targetDetail) => {
+      targetDetail.addEventListener("click", () => {
+        details.forEach((detail) => {
+          if (detail !== targetDetail) {
+            detail.removeAttribute("open");
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
