@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A Jornada dos Dados — Documentação de Processo</title>
+  <title>Processo e Engenharia de Dados — ITBI Fortaleza</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -34,7 +34,6 @@
       line-height: 1.6; overflow-x: hidden;
     }
 
-    /* ═══ Background Pattern ═══ */
     .bg-pattern {
       position: fixed; inset: 0; z-index: -1;
       background-image: 
@@ -43,7 +42,6 @@
       background-size: cover;
     }
 
-    /* ═══ Navegação ═══ */
     nav {
       position: fixed; top: 0; width: 100%; z-index: 100;
       background: var(--surface-glass); backdrop-filter: blur(16px);
@@ -56,7 +54,6 @@
     }
     .back-btn:hover { color: var(--text-main); }
 
-    /* ═══ Hero Section ═══ */
     .hero {
       min-height: 70vh; display: flex; flex-direction: column;
       align-items: center; justify-content: center; text-align: center;
@@ -69,17 +66,15 @@
       margin-bottom: 24px; color: var(--brand);
     }
     .hero h1 {
-      font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 700;
+      font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700;
       line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em;
     }
     .hero p {
-      font-size: 18px; color: var(--text-muted); max-width: 680px; font-weight: 400;
+      font-size: 18px; color: var(--text-muted); max-width: 760px; font-weight: 400;
     }
 
-    /* ═══ A Jornada (Timeline) ═══ */
     .journey {
-      max-width: 900px; margin: 0 auto; padding: 0 24px 80px;
-      position: relative;
+      max-width: 900px; margin: 0 auto; padding: 0 24px 80px; position: relative;
     }
     
     .timeline-line {
@@ -116,8 +111,7 @@
     }
     
     .step:hover .card {
-      border-color: rgba(255,255,255,0.15);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border-color: rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
     .step-number {
@@ -138,7 +132,6 @@
     }
     .card p { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
 
-    /* Insight de Negócio */
     .insight {
       background: rgba(255,255,255,0.02); border-left: 2px solid var(--brand); 
       padding: 16px; border-radius: 0 8px 8px 0;
@@ -149,13 +142,20 @@
     }
     .insight-text { font-size: 14px; color: #E4E4E7; font-weight: 400; line-height: 1.5; }
 
-    /* Variações sutis de cor */
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px; padding: 12px;
+    }
+    .stat-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+    .stat-val { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--text-main); }
+
     .step-2 .timeline-progress, .step-2 .step-dot { border-color: var(--accent-1); box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); }
     .step-2 .insight { border-left-color: var(--accent-1); }
-
     .step-3 .timeline-progress, .step-3 .step-dot { border-color: var(--accent-3); box-shadow: 0 0 15px rgba(124, 58, 237, 0.3); }
     .step-3 .insight { border-left-color: var(--accent-3); }
-
     .step-4 .timeline-progress, .step-4 .step-dot { border-color: var(--accent-2); box-shadow: 0 0 15px rgba(5, 150, 105, 0.3); }
     .step-4 .insight { border-left-color: var(--accent-2); }
 
@@ -188,20 +188,21 @@
       Voltar ao Dashboard
     </a>
     <div style="font-family: var(--font-display); font-weight: 600; font-size: 16px;">
-      ITBI Process
+      Documentação de Negócios
     </div>
   </nav>
 
   <header class="hero">
-    <div class="badge">Visão Geral do Processo</div>
-    <h1>Construção e Análise Estratégica</h1>
-    <p>Entenda as etapas fundamentais do projeto. Da estruturação dos dados brutos públicos à implementação da arquitetura analítica focada no mercado imobiliário.</p>
+    <div class="badge">A Sequência Lógica do Projeto</div>
+    <h1>O Ciclo de Vida dos Dados Imobiliários</h1>
+    <p>Acompanhe, passo a passo, como capturamos a base oficial do governo, tratamos os registros e estruturamos as informações para a criação deste painel analítico.</p>
   </header>
 
   <main class="journey">
     <div class="timeline-line"></div>
     <div class="timeline-progress" id="progress"></div>
 
+    <!-- PASSO 1 -->
     <div class="step step-1">
       <div class="step-dot"></div>
       <div class="step-content">
@@ -210,16 +211,31 @@
           <div class="card-icon">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
           </div>
-          <h2>Coleta e Avaliação da Base de Dados</h2>
-          <p>O processo iniciou com a extração de dados públicos do portal da SEFIN. A base continha mais de 100.000 registros históricos de transações, mas apresentava inconsistências críticas de formatação, acentuação corrompida e coordenadas geográficas imprecisas.</p>
+          <h2>A Origem e Diagnóstico do Dataset</h2>
+          <p>A base de dados oficial foi extraída do <strong>Portal de Dados Abertos da SEFIN</strong> (Fortaleza). Recebemos um arquivo CSV denso, com a codificação legada 'latin-1' e separadores complexos.</p>
+          
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-label">Registros Iniciais</div>
+              <div class="stat-val">94.970</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Colunas Brutas</div>
+              <div class="stat-val">37 colunas</div>
+            </div>
+          </div>
+
+          <p style="font-size: 14px; margin-bottom: 20px;">O diagnóstico revelou problemas graves: a coluna <code>TIPO_TERRENO</code> estava 100% nula. Pior ainda, quase 88% dos imóveis não possuíam a data exata da transação (<code>data_transacao_itbi</code>) preenchida pela prefeitura.</p>
+
           <div class="insight">
-            <div class="insight-title">Foco em Gestão</div>
-            <div class="insight-text">Dados abertos são o ponto de partida, mas a ausência de padronização impede análises precisas. A validação inicial evita erros estruturais na tomada de decisão gerencial.</div>
+            <div class="insight-title">Foco de Análise</div>
+            <div class="insight-text">Conhecer o estado real do dado bruto é vital. Não podíamos confiar na "data da transação", então nossa estratégia precisou migrar para a "data de cadastramento" e "ano do débito" para garantir precisão temporal.</div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- PASSO 2 -->
     <div class="step step-2">
       <div class="step-dot"></div>
       <div class="step-content">
@@ -228,16 +244,24 @@
           <div class="card-icon">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           </div>
-          <h2>Processamento e Tratamento (ETL)</h2>
-          <p>Implementamos rotinas de automação em Python para higienizar a tabela. O script padronizou terminologias de bairros e realizou o cálculo de indicadores secundários cruciais que não estavam presentes na base original, como o Valor do Metro Quadrado.</p>
+          <h2>O Processo de ETL (Limpeza e Padronização)</h2>
+          <p>Para não trabalhar com informações erradas, rodamos um script Python para realizar o processo de <strong>ETL (Extração, Transformação e Carga)</strong>. As mudanças mais importantes que fizemos para dar precisão à análise foram:</p>
+          
+          <ul style="font-size: 14px; color: var(--text-muted); margin-left: 16px; margin-bottom: 20px;">
+            <li style="margin-bottom: 8px;">Excluímos colunas inutilizáveis (100% nulas).</li>
+            <li style="margin-bottom: 8px;">Convertemos a acentuação para o formato padrão (UTF-8), salvando nomes vitais como "Passaré" e "Cocó".</li>
+            <li style="margin-bottom: 8px;"><strong>Criação de Novas Colunas:</strong> Calculamos atributos estratégicos que o governo não entregou prontos, gerando o <code>vl_m2_base</code> (Valor por Metro Quadrado), a <code>categoria_uso</code> (isolando Residenciais vs Comerciais) e criando as <code>faixas_de_valor</code> (ex: Acima de 1 Milhão).</li>
+          </ul>
+
           <div class="insight">
-            <div class="insight-title">Foco em Gestão</div>
-            <div class="insight-text">A automação do processo de limpeza (ETL) garante agilidade e escalabilidade, transformando dados brutos em métricas padronizadas prontas para análise financeira.</div>
+            <div class="insight-title">Foco de Análise</div>
+            <div class="insight-text">A padronização permite que o painel grupe os dados de forma confiável. Sem essas transformações, o sistema leria o bairro "Aldeota" de três formas diferentes, dividindo incorretamente as métricas.</div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- PASSO 3 -->
     <div class="step step-3">
       <div class="step-dot"></div>
       <div class="step-content">
@@ -246,16 +270,26 @@
           <div class="card-icon">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
           </div>
-          <h2>Tratamento Preditivo (Modelo KNN)</h2>
-          <p>Identificamos que 15% das amostras careciam de informações essenciais, como a área do terreno. Para preservar o volume financeiro do estudo, aplicamos o algoritmo K-Nearest Neighbors (KNN), que utiliza correlação matemática para estimar os valores ausentes baseado nos perfis dos imóveis mais semelhantes.</p>
+          <h2>A Recuperação de Dados Faltantes (KNN)</h2>
+          <p>Havia um buraco perigoso na amostra: mais de 10.000 imóveis não tinham a idade anotada, e quase 6.890 transações não possuíam o Valor Base de Cálculo definido. </p>
+          <p style="font-size: 14px; margin-bottom: 20px;">Ao invés de descartar e perder a base histórica de anos inteiros, aplicamos o algoritmo KNN (K-Nearest Neighbors). O método buscou, para cada imóvel em branco, os vizinhos matematicamente mais próximos (mesmo bairro, mesmo padrão de construção) para projetar com exatidão o valor ou área ausentes.</p>
+
+          <div class="stats-grid">
+            <div class="stat-box" style="grid-column: span 2;">
+              <div class="stat-label">Taxa de Cobertura Final de Valores</div>
+              <div class="stat-val" style="color: var(--accent-3)">92.7% dos registros salvos</div>
+            </div>
+          </div>
+
           <div class="insight">
-            <div class="insight-title">Foco em Gestão</div>
-            <div class="insight-text">A exclusão de dados incompletos comprometeria a realidade do faturamento municipal. O uso de modelagem estatística mantém a integridade do Volume Geral de Vendas (VGV) no relatório.</div>
+            <div class="insight-title">Foco de Análise</div>
+            <div class="insight-text">Salvar essas informações via Machine Learning garantiu a representatividade financeira (VGV) no mapa sem comprometer o rigor estatístico da base da Prefeitura.</div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- PASSO 4 -->
     <div class="step step-4">
       <div class="step-dot"></div>
       <div class="step-content">
@@ -264,29 +298,18 @@
           <div class="card-icon">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           </div>
-          <h2>Estruturação do Painel Analítico</h2>
-          <p>A camada visual do projeto foi desenhada para resposta instantânea. Adicionamos lógica de filtros globais e aplicamos o princípio de Pareto para evidenciar quais bairros específicos concentram a maior proporção do capital imobiliário movimentado.</p>
-          <div class="insight">
-            <div class="insight-title">Foco em Gestão</div>
-            <div class="insight-text">Painéis estáticos são limitados. Um dashboard reativo permite que a liderança simule recortes de mercado durante reuniões estratégicas para direcionar planos de ação.</div>
-          </div>
-        </div>
-      </div>
-    </div>
+          <h2>Conexão do Sistema Front-end (React)</h2>
+          <p>Com o arquivo final gerado (<code>itbi_clean.csv</code>), desenhamos a arquitetura do painel visual. Como e de onde o sistema puxa os dados?</p>
+          
+          <ul style="font-size: 14px; color: var(--text-muted); margin-left: 16px; margin-bottom: 20px;">
+            <li style="margin-bottom: 8px;"><strong>Leitura Cliente-Lado:</strong> O sistema NÃO usa um banco de dados relacional clássico (como SQL). Nós inserimos o CSV compactado na nuvem da Vercel. Quando a página carrega, ela lê e analisa toda a planilha na hora usando a biblioteca PapaParse.</li>
+            <li style="margin-bottom: 8px;"><strong>Filtros Interligados:</strong> Como o dado já está "limpo" no navegador, nossos gráficos conversam entre si quase sem atraso (delay nulo).</li>
+            <li style="margin-bottom: 8px;"><strong>Mapa Georeferenciado:</strong> Ignoramos os problemas de coordenadas falhas originais e conectamos o nome do Bairro a um polígono oficial de Fortaleza (GeoJSON), pintando as áreas exatas.</li>
+          </ul>
 
-    <div class="step step-1">
-      <div class="step-dot"></div>
-      <div class="step-content">
-        <div class="card">
-          <div class="step-number">05</div>
-          <div class="card-icon">
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          </div>
-          <h2>Desenvolvimento Assistido (IA)</h2>
-          <p>A execução do código e a revisão da infraestrutura contaram com o suporte de inteligência artificial aplicada. O processo de Pair Programming agilizou o desenvolvimento dos componentes visuais e a resolução de inconsistências técnicas de arquitetura de software.</p>
           <div class="insight">
-            <div class="insight-title">Foco em Gestão</div>
-            <div class="insight-text">Ferramentas de IA no fluxo de desenvolvimento aumentam exponencialmente a produtividade, encurtando o tempo entre o planejamento do projeto e sua implantação final.</div>
+            <div class="insight-title">Foco de Análise</div>
+            <div class="insight-text">Esta arquitetura reduz custos de infraestrutura a zero e cria a interatividade ágil necessária para os "Filtros Cruzados", onde a diretoria pode isolar um segmento de luxo com um único clique.</div>
           </div>
         </div>
       </div>
