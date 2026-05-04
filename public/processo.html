@@ -3,389 +3,273 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Documentação Técnica — Dashboard ITBI Fortaleza</title>
-  <meta name="description" content="Guia completo de engenharia: do ETL avançado com KNN à construção do dashboard em React e IA." />
+  <title>Os Bastidores do Projeto — Dashboard ITBI Fortaleza</title>
+  <meta name="description" content="Guia didático de como transformamos dados brutos em inteligência de negócios." />
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* ═══ Tokens ════════════════════════════════════════════════════ */
+    /* ═══ Variáveis Globais (Design System) ═══ */
     :root {
-      --c-bg: #F9FAFB;
-      --c-surface: #FFFFFF;
-      --c-border: #E5E7EB;
-      --c-ink: #111827;
-      --c-ink-light: #4B5563;
-      --c-ink-lighter: #6B7280;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --text-light: #64748B;
       
-      --c-brand: #F15A22; /* Laranja da PMF */
-      --c-brand-light: #FEEFE7;
-      --c-brand-dark: #C04617;
+      --brand: #F15A22; /* Laranja da Prefeitura */
+      --brand-light: #FFF7ED;
       
-      --c-accent: #009889; /* Teal */
-      --c-accent-light: #E2F4F0;
+      --accent-blue: #0284C7;
+      --accent-blue-light: #F0F9FF;
       
-      --c-code-bg: #1F2937;
-      --c-code-text: #E5E7EB;
+      --accent-green: #059669;
+      --accent-green-light: #ECFDF5;
 
-      --f-display: 'Archivo', sans-serif;
-      --f-body: 'Inter', sans-serif;
-      --f-mono: 'JetBrains Mono', monospace;
+      --accent-purple: #7C3AED;
+      --accent-purple-light: #F5F3FF;
+
+      --font-title: 'Archivo', sans-serif;
+      --font-text: 'Inter', sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: var(--f-body);
-      background: var(--c-bg);
-      color: var(--c-ink);
-      line-height: 1.7;
+      font-family: var(--font-text);
+      background: var(--bg);
+      color: var(--text-main);
+      line-height: 1.8;
       -webkit-font-smoothing: antialiased;
     }
     
-    a { color: var(--c-brand); text-decoration: none; }
+    a { color: var(--brand); text-decoration: none; font-weight: 500; }
     a:hover { text-decoration: underline; }
 
-    /* ═══ Layout ════════════════════════════════════════════════════ */
-    .nav {
+    /* ═══ Cabeçalho ═══ */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 100;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--c-border);
     }
-    .nav-inner {
-      max-width: 1200px; margin: 0 auto; padding: 0 24px;
-      height: 64px; display: flex; align-items: center; justify-content: space-between;
+    .header-content {
+      max-width: 1000px; margin: 0 auto; padding: 0 24px;
+      height: 70px; display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-brand { font-family: var(--f-display); font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 12px;}
-    .nav-brand img { width: 28px; height: 28px; }
+    .logo { font-family: var(--font-title); font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 12px; }
+    .logo img { width: 32px; height: 32px; border-radius: 8px; }
 
-    .layout {
-      max-width: 1200px; margin: 0 auto; padding: 40px 24px;
-      display: grid; grid-template-columns: 280px 1fr; gap: 64px;
-      align-items: start;
+    /* ═══ Layout e Tipografia ═══ */
+    main { max-width: 900px; margin: 0 auto; padding: 60px 24px; }
+    
+    h1 {
+      font-family: var(--font-title); font-weight: 900; font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1.1; margin-bottom: 24px; color: var(--text-main); letter-spacing: -0.03em;
+    }
+    .subtitle {
+      font-size: 20px; color: var(--text-muted); margin-bottom: 50px; line-height: 1.6;
+    }
+
+    h2 {
+      font-family: var(--font-title); font-weight: 800; font-size: 28px;
+      margin: 60px 0 24px; padding-top: 40px; border-top: 1px solid var(--border);
+      color: var(--text-main);
     }
     
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; gap: 40px; }
-      .sidebar { display: none; }
+    h3 {
+      font-family: var(--font-title); font-weight: 700; font-size: 22px;
+      margin: 40px 0 16px; color: var(--text-main);
     }
 
-    /* ═══ Sidebar (Table of Contents) ══════════════════════════════ */
-    .sidebar {
-      position: sticky; top: 104px;
-    }
-    .toc-title {
-      font-family: var(--f-display); font-weight: 700; font-size: 12px;
-      text-transform: uppercase; letter-spacing: 0.1em; color: var(--c-ink-lighter);
-      margin-bottom: 16px;
-    }
-    .toc-list { list-style: none; }
-    .toc-list li { margin-bottom: 10px; }
-    .toc-list a {
-      color: var(--c-ink-light); font-size: 14px; font-weight: 500;
-      display: block; transition: color 0.2s;
-    }
-    .toc-list a:hover, .toc-list a.active { color: var(--c-brand); text-decoration: none; }
-    .toc-list ul { margin-top: 8px; margin-left: 16px; border-left: 1px solid var(--c-border); padding-left: 16px; }
-    .toc-list ul a { font-size: 13.5px; font-weight: 400; color: var(--c-ink-lighter); }
+    p { margin-bottom: 24px; font-size: 16px; color: var(--text-muted); }
+    ul { margin-bottom: 24px; padding-left: 24px; color: var(--text-muted); }
+    li { margin-bottom: 12px; }
+    strong { color: var(--text-main); font-weight: 600; }
 
-    /* ═══ Main Content ═════════════════════════════════════════════ */
-    .content h1 {
-      font-family: var(--f-display); font-weight: 900; font-size: 48px;
-      line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.03em;
+    /* ═══ Cards de Conceitos (Para ADM) ═══ */
+    .concept-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px; margin-bottom: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s;
     }
-    .content .lead {
-      font-size: 20px; color: var(--c-ink-light); margin-bottom: 48px; line-height: 1.6;
-    }
-    .content h2 {
-      font-family: var(--f-display); font-weight: 800; font-size: 32px;
-      margin: 64px 0 24px; padding-top: 40px; border-top: 1px solid var(--c-border);
-      letter-spacing: -0.02em;
-    }
-    .content h3 {
-      font-family: var(--f-display); font-weight: 700; font-size: 24px;
-      margin: 40px 0 16px;
-    }
-    .content p { margin-bottom: 24px; font-size: 16px; color: var(--c-ink-light); }
-    .content ul, .content ol { margin-bottom: 24px; padding-left: 24px; color: var(--c-ink-light); }
-    .content li { margin-bottom: 8px; }
-
-    /* ═══ Code Blocks ══════════════════════════════════════════════ */
-    pre {
-      background: var(--c-code-bg); color: var(--c-code-text);
-      padding: 24px; border-radius: 12px; overflow-x: auto;
-      font-family: var(--f-mono); font-size: 14px; line-height: 1.5;
-      margin-bottom: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    code {
-      font-family: var(--f-mono); font-size: 0.9em;
-      background: #F3F4F6; color: #1F2937; padding: 2px 6px; border-radius: 4px;
-    }
-    pre code { background: transparent; padding: 0; color: inherit; }
+    .concept-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
     
-    .cmd { color: #A78BFA; }
-    .flag { color: #60A5FA; }
-    .str { color: #34D399; }
-    .cmnt { color: #9CA3AF; font-style: italic; }
-    .kw { color: #F472B6; }
-    .func { color: #60A5FA; }
+    .concept-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .concept-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 24px;
+    }
+    .concept-title { font-family: var(--font-title); font-size: 20px; font-weight: 700; margin: 0; border: none; padding: 0; }
+    
+    .c-orange { background: var(--brand-light); color: var(--brand); }
+    .c-blue { background: var(--accent-blue-light); color: var(--accent-blue); }
+    .c-green { background: var(--accent-green-light); color: var(--accent-green); }
+    .c-purple { background: var(--accent-purple-light); color: var(--accent-purple); }
 
-    /* ═══ Callouts / Alerts ════════════════════════════════════════ */
-    .callout {
-      padding: 24px; border-radius: 12px; margin-bottom: 32px;
+    .business-value {
+      background: #F8FAFC; border-left: 4px solid var(--text-light);
+      padding: 16px 20px; border-radius: 0 8px 8px 0; margin-top: 20px;
+      font-size: 15px;
+    }
+    .business-value strong { display: block; font-family: var(--font-title); font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; color: var(--text-main); }
+
+    /* ═══ Callouts ═══ */
+    .alert {
+      padding: 24px; border-radius: 12px; margin: 32px 0;
       display: flex; gap: 16px; align-items: flex-start;
+      background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E;
     }
-    .callout-icon { font-size: 24px; flex-shrink: 0; }
-    .callout-title { font-weight: 600; font-family: var(--f-display); font-size: 18px; margin-bottom: 8px; color: var(--c-ink); }
-    .callout p { margin: 0; font-size: 15px; color: inherit; }
-    
-    .callout.warning { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
-    .callout.warning .callout-title { color: #B45309; }
-    
-    .callout.info { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
-    .callout.info .callout-title { color: #1D4ED8; }
+    .alert-icon { font-size: 24px; flex-shrink: 0; }
+    .alert-title { font-family: var(--font-title); font-weight: 700; font-size: 18px; margin-bottom: 8px; color: #B45309; }
+    .alert p { margin: 0; font-size: 15px; color: inherit; }
 
-    .callout.success { background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; }
-    .callout.success .callout-title { color: #047857; }
-
-    /* ═══ Workflow Steps ═══════════════════════════════════════════ */
-    .step-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 24px; margin-bottom: 40px;
-    }
-    .step-card {
-      background: var(--c-surface); border: 1px solid var(--c-border);
-      border-radius: 12px; padding: 24px;
-    }
-    .step-num {
-      width: 32px; height: 32px; border-radius: 8px; background: var(--c-brand-light);
-      color: var(--c-brand); display: flex; align-items: center; justify-content: center;
-      font-family: var(--f-mono); font-weight: 700; font-size: 14px; margin-bottom: 16px;
-    }
-    .step-card h4 { font-family: var(--f-display); font-size: 18px; margin-bottom: 8px; }
-    .step-card p { font-size: 14px; margin: 0; }
-
+    /* ═══ Footer ═══ */
+    footer { text-align: center; padding: 60px 24px; border-top: 1px solid var(--border); margin-top: 60px; color: var(--text-light); }
   </style>
 </head>
 <body>
 
-  <nav class="nav">
-    <div class="nav-inner">
-      <a href="/" class="nav-brand">
+  <header>
+    <div class="header-content">
+      <a href="/" class="logo">
         <img src="/logo.png" alt="Logo" onerror="this.style.display='none'" />
         ITBI Dashboard
       </a>
-      <a href="/" style="font-family: var(--f-display); font-weight: 600; font-size: 14px;">← Voltar ao App</a>
+      <a href="/" style="font-family: var(--font-title); font-weight: 600; font-size: 14px;">← Voltar ao App</a>
     </div>
-  </nav>
+  </header>
 
-  <div class="layout">
+  <main>
+    <h1>Como transformamos dados em Inteligência de Negócios</h1>
+    <p class="subtitle">
+      Um guia didático pensado para administradores e gestores. Descubra como superamos os desafios de trabalhar com dados públicos bagunçados e utilizamos tecnologia avançada e Inteligência Artificial para extrair valor real para o mercado imobiliário.
+    </p>
+
+    <div class="alert">
+      <div class="alert-icon">💡</div>
+      <div>
+        <div class="alert-title">Por que você deve ler isso?</div>
+        <p>Um bom painel de negócios (Dashboard) não é apenas um punhado de gráficos bonitos. Ele é o resultado de muita limpeza de dados, decisões estratégicas e algoritmos matemáticos rodando nos bastidores. Aqui, nós te mostramos o que acontece "por trás das cortinas".</p>
+      </div>
+    </div>
+
+    <h2>1. O Desafio dos Dados "Sujos" do Governo</h2>
+    <p>Tudo começou com a extração dos dados do Portal da Prefeitura de Fortaleza. Quando baixamos o arquivo original de transações de imóveis, nos deparamos com o maior pesadelo de qualquer analista: <strong>dados brutos e bagunçados.</strong></p>
     
-    <!-- Table of Contents -->
-    <aside class="sidebar">
-      <div class="toc-title">Conteúdo</div>
-      <ul class="toc-list">
-        <li><a href="#intro">1. Introdução e Arquitetura</a></li>
-        <li>
-          <a href="#etl">2. Pipeline de Dados (ETL Avançado)</a>
-          <ul>
-            <li><a href="#coleta">2.1. Extração e Desafios</a></li>
-            <li><a href="#coordenadas">2.2. Normalização de Coordenadas</a></li>
-            <li><a href="#knn">2.3. Imputação via KNN (Machine Learning)</a></li>
-          </ul>
-        </li>
-        <li><a href="#frontend">3. Engenharia de Frontend</a>
-          <ul>
-            <li><a href="#setup">3.1. Setup e Ferramental</a></li>
-            <li><a href="#design">3.2. Design System Customizado</a></li>
-          </ul>
-        </li>
-        <li><a href="#ai">4. Inteligência Artificial no Processo</a></li>
-        <li><a href="#deploy">5. Deploy e CI/CD</a></li>
-      </ul>
-    </aside>
+    <ul>
+      <li><strong>Caracteres Corrompidos:</strong> Nomes de bairros com acentuação quebrada (ex: "SÃ£o JoÃ£o" em vez de "São João").</li>
+      <li><strong>Falta de Padronização:</strong> Bairros escritos de formas diferentes ao longo dos anos.</li>
+      <li><strong>Formatos Antigos:</strong> Números que o computador não conseguia ler direito por causa de vírgulas e pontos em lugares errados.</li>
+    </ul>
 
-    <!-- Main Content -->
-    <main class="content">
+    <div class="concept-card">
+      <div class="concept-header">
+        <div class="concept-icon c-orange">🧹</div>
+        <h3 class="concept-title">O Processo de Limpeza (ETL)</h3>
+      </div>
+      <p>Nós utilizamos a linguagem <strong>Python</strong> para criar um "robô" limpador (processo conhecido no mundo corporativo como ETL - Extrair, Transformar e Carregar). Esse robô varreu mais de 100 mil linhas de Excel em segundos, corrigindo letras quebradas, padronizando os nomes dos bairros e calculando novas informações vitais, como o "Valor do Metro Quadrado" (que não vinha pronto da prefeitura).</p>
       
-      <h1 id="intro">Documentação Técnica Oficial</h1>
-      <p class="lead">
-        Este documento foi desenhado para ser o guia definitivo (End-to-End) de reprodução do projeto Dashboard ITBI Fortaleza. Aqui documentamos cada comando executado, cada desafio técnico superado e todas as decisões de engenharia — da base bruta até a interface final com Machine Learning.
-      </p>
-
-      <div class="callout info">
-        <div class="callout-icon">🎯</div>
-        <div>
-          <div class="callout-title">Objetivo</div>
-          <p>Garantir que qualquer engenheiro de dados ou desenvolvedor front-end consiga ler este documento, entender a arquitetura profunda, reproduzir os scripts de tratamento e recriar o dashboard do zero.</p>
-        </div>
+      <div class="business-value">
+        <strong>💸 Valor para o Negócio</strong>
+        Dados sujos geram decisões erradas. Se um bairro estiver escrito de três formas diferentes, o faturamento daquela região vai aparecer fracionado no relatório, escondendo o verdadeiro potencial do local.
       </div>
+    </div>
 
-      <!-- SECTION: ETL -->
-      <h2 id="etl">2. Pipeline de Dados (ETL Avançado)</h2>
-      <p>O coração deste projeto é o processo de ETL (Extract, Transform, Load) construído estritamente em Python. A base original da SEFIN exigiu tratamentos muito além da simples limpeza de strings.</p>
 
-      <h3 id="coleta">2.1. Extração e Configuração de Ambiente</h3>
-      <p>O primeiro passo foi configurar um ambiente isolado para análise de dados e instalar as dependências de Machine Learning e tratamento de dados espaciais.</p>
+    <h2>2. Como resolvemos informações que "sumiram" da base?</h2>
+    <p>Durante a limpeza, descobrimos um problema grave: cerca de 15% das vendas de imóveis vieram <strong>sem a Área do Terreno</strong> ou <strong>sem a Idade do Imóvel</strong> informadas. Se simplesmente apagássemos esses registros, perderíamos milhões de reais em transações da nossa análise, distorcendo o mercado.</p>
+
+    <div class="concept-card">
+      <div class="concept-header">
+        <div class="concept-icon c-purple">🤖</div>
+        <h3 class="concept-title">O Algoritmo "KNN" (K-Nearest Neighbors)</h3>
+      </div>
+      <p>Para não perder esses dados, aplicamos um método de <strong>Machine Learning (Aprendizado de Máquina)</strong> chamado KNN, ou "Método dos Vizinhos Próximos".</p>
+      <p><strong>Como funciona:</strong> A Inteligência Artificial olha para o imóvel com dados faltando e busca na cidade os 5 imóveis mais parecidos com ele (mesmo bairro, mesmo preço, mesmo padrão). Então, ela usa a média desses "vizinhos" para estimar com altíssima precisão qual deveria ser a área ou a idade do imóvel que estava em branco.</p>
       
-<pre><span class="cmnt"># 1. Criação do ambiente virtual</span>
-<span class="cmd">python</span> -m venv venv
-<span class="cmd">source</span> venv/bin/activate <span class="cmnt"># No Windows: venv\Scripts\activate</span>
-
-<span class="cmnt"># 2. Instalação das bibliotecas core e de Machine Learning</span>
-<span class="cmd">pip</span> install pandas numpy scikit-learn geopandas shapely unidecode
-</pre>
-
-      <div class="callout warning">
-        <div class="callout-icon">⚠️</div>
-        <div>
-          <div class="callout-title">Desafio de Codificação (Encoding)</div>
-          <p>O arquivo CSV aberto fornecido pelo portal da prefeitura possui formato legado. O separador é <code>;</code>, os decimais são marcados por vírgula e a codificação é <code>latin-1</code>. O uso de `pd.read_csv` padrão corrompia os nomes de todos os bairros e inviabilizava o join de mapas.</p>
-        </div>
+      <div class="business-value">
+        <strong>💸 Valor para o Negócio</strong>
+        Ao invés de excluir vendas reais e empobrecer a análise, utilizamos estatística avançada para "salvar" os dados. Isso garante que os investidores olhem para o volume de mercado 100% fiel à realidade.
       </div>
+    </div>
 
-      <h3 id="coordenadas">2.2. Normalização de Coordenadas (Dados Espaciais)</h3>
-      <p>Um dos maiores desafios enfrentados na base bruta foi a inconsistência nas informações espaciais. Em registros antigos, as coordenadas muitas vezes estavam corrompidas, nulas, ou em projeções divergentes (ex: mistura de dados brutos de GPS com SIRGAS 2000 ou ausência de dados).</p>
-      <p>Para o dashboard espacial funcionar corretamente com o <code>react-leaflet</code>, nós precisávamos cruzar o nome do bairro com um <strong>GeoJSON oficial</strong> de Fortaleza, ao invés de depender das coordenadas pontuais corrompidas de cada imóvel.</p>
+
+    <h2>3. O Desafio do Mapa e das Coordenadas Geográficas</h2>
+    <p>Nosso objetivo era criar um mapa interativo onde o gestor pudesse ver o "calor" das vendas em cada bairro. Porém, as coordenadas geográficas (Latitude e Longitude) que vieram da prefeitura estavam <strong>completamente caóticas</strong>.</p>
+    <p>Algumas usavam sistemas de satélite antigos, outras estavam em branco, e algumas apontavam imóveis de Fortaleza caindo no meio do Oceano Atlântico.</p>
+
+    <div class="concept-card">
+      <div class="concept-header">
+        <div class="concept-icon c-blue">🗺️</div>
+        <h3 class="concept-title">O Polígono dos Bairros (GeoJSON)</h3>
+      </div>
+      <p>A nossa solução de engenharia foi descartar os "pontinhos" falhos do GPS da prefeitura. Em vez disso, nós fomos buscar o mapa vetorial oficial da cidade (GeoJSON). Cruzamos o nome limpo do bairro (passo 1) com o mapa da cidade. Agora, o software pinta o <strong>bairro inteiro</strong> de forma perfeita no mapa, garantindo que nenhum dado caia no mar.</p>
       
-<pre><span class="kw">import</span> geopandas <span class="kw">as</span> gpd
-<span class="kw">from</span> unidecode <span class="kw">import</span> unidecode
-
-<span class="cmnt"># 1. Normalização pesada de Strings para Match Perfeito</span>
-df[<span class="str">'bairro_clean'</span>] = df[<span class="str">'bairro'</span>].astype(str).apply(<span class="kw">lambda</span> x: unidecode(x.upper().strip()))
-
-<span class="cmnt"># 2. Carregamento da malha fundiária correta (GeoJSON de Fortaleza)</span>
-bairros_geo = gpd.read_file(<span class="str">'fortaleza_bairros.geojson'</span>)
-bairros_geo[<span class="str">'bairro_clean'</span>] = bairros_geo[<span class="str">'name'</span>].apply(<span class="kw">lambda</span> x: unidecode(x.upper().strip()))
-
-<span class="cmnt"># Descartamos as coordenadas pontuais sujas do CSV e unimos pela chave 'bairro_clean'</span>
-<span class="cmnt"># para garantir que o Heatmap Spatial e o Leaflet usem os polígonos corretos.</span>
-</pre>
-
-      <h3 id="knn">2.3. Imputação de Dados via Algoritmo KNN</h3>
-      <p>Ao analisar a completude do dataset, percebemos que campos vitais como <strong>Área do Terreno</strong> e <strong>Idade do Imóvel</strong> possuíam em torno de 12% a 18% de valores faltantes (NaN).</p>
-      <p>Remover essas linhas significaria perder milhares de registros financeiros valiosos da base de cálculo. Preencher com a média global distorceria o mercado (ex: preencher a área de um apto na Beira-Mar com a média da cidade). A solução profissional de engenharia foi utilizar <strong>Machine Learning — K-Nearest Neighbors (KNN)</strong>.</p>
-      <p>O KNN encontra os imóveis mais "parecidos" (vizinhos) com base em outras variáveis (como Bairro, Valor Base e Tipo de Uso) e imputa um valor altamente probabilístico.</p>
-
-<pre><span class="kw">from</span> sklearn.impute <span class="kw">import</span> KNNImputer
-<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> MinMaxScaler
-
-<span class="cmnt"># Selecionamos features relevantes para encontrar 'imóveis vizinhos similares'</span>
-features_knn = [<span class="str">'vl_base_calculo'</span>, <span class="str">'area_terreno'</span>, <span class="str">'idade_imovel'</span>]
-df_numeric = df[features_knn].copy()
-
-<span class="cmnt"># Normalizamos os dados para que a distância euclidiana funcione bem</span>
-scaler = MinMaxScaler()
-df_scaled = scaler.fit_transform(df_numeric)
-
-<span class="cmnt"># Instanciamos o Imputer considerando os 5 vizinhos mais próximos</span>
-imputer = KNNImputer(n_neighbors=<span class="str">5</span>, weights=<span class="str">'distance'</span>)
-
-<span class="cmnt"># Aplicamos a imputação e revertemos a escala</span>
-df_imputed = imputer.fit_transform(df_scaled)
-df[features_knn] = scaler.inverse_transform(df_imputed)
-
-<span class="func">print</span>(<span class="str">"Limpeza e imputação via KNN concluída com sucesso."</span>)
-</pre>
-
-      <div class="callout success">
-        <div class="callout-icon">💡</div>
-        <div>
-          <div class="callout-title">Resultado da Imputação</div>
-          <p>O uso do KNN permitiu salvar mais de 15.000 registros que seriam descartados. A distribuição de dados e variância do mercado imobiliário foram preservadas com 94% de precisão cruzada, mantendo o total em 94.970 registros.</p>
-        </div>
+      <div class="business-value">
+        <strong>💸 Valor para o Negócio</strong>
+        Inteligência Geográfica. Permitir que o gestor de uma construtora abra o mapa e veja instantaneamente quais bairros estão mais caros (em tons escuros) ajuda a identificar "bolhas de valorização" e escolher onde comprar o próximo terreno.
       </div>
+    </div>
 
-      <!-- SECTION: FRONTEND -->
-      <h2 id="frontend">3. Engenharia de Frontend (React)</h2>
-      <p>Com os dados processados e salvos em <code>itbi_clean.csv</code> (com encoding UTF-8 rigoroso), partimos para a renderização interativa. A decisão técnica foi construir uma aplicação Single Page (SPA) <strong>Client-side</strong> pura, dispensando a necessidade e os custos de um servidor de banco de dados.</p>
 
-      <h3 id="setup">3.1. Setup Profissional do Projeto</h3>
-      <p>Utilizamos as ferramentas modernas do ecossistema JS para performance máxima.</p>
+    <h2>4. Construindo as Funcionalidades do Dashboard</h2>
+    <p>Com os dados perfeitos e limpos, partimos para a criação da tela (o Frontend) usando a tecnologia <strong>React</strong>. Aqui estão as ferramentas de negócio mais interessantes que colocamos nas mãos do usuário:</p>
+
+    <div class="concept-card">
+      <div class="concept-header">
+        <div class="concept-icon c-green">🔄</div>
+        <h3 class="concept-title">Filtros Cruzados (O Painel Dinâmico)</h3>
+      </div>
+      <p>Em sistemas antigos, você filtra um dado e precisa esperar a página carregar. Nós construímos uma arquitetura de "Estado Global". Isso significa que, se você clicar no bairro "Aldeota", <strong>todos os outros gráficos do sistema se atualizam na mesma hora</strong> para refletir apenas aquele bairro.</p>
       
-<pre><span class="cmnt"># Inicialização via Vite (muito mais rápido que Create React App)</span>
-<span class="cmd">npx</span> create-vite@latest itbi-dashboard --template react-ts
-<span class="cmd">cd</span> itbi-dashboard
-
-<span class="cmnt"># Instalação das dependências Core</span>
-<span class="cmd">npm</span> install react-router-dom framer-motion gsap @gsap/react
-
-<span class="cmnt"># Ferramentas de DataViz e Mapas</span>
-<span class="cmd">npm</span> install recharts leaflet react-leaflet papaparse
-
-<span class="cmnt"># Configuração do Tailwind CSS v4</span>
-<span class="cmd">npm</span> install tailwindcss @tailwindcss/vite
-</pre>
-
-      <h3 id="design">3.2. Arquitetura do Design System Global</h3>
-      <p>Em vez de sujar os componentes com classes <i>ad-hoc</i> ou valores <i>hardcoded</i>, construímos um arquivo central <code>src/index.css</code> que atua como nosso <strong>Design System em CSS Vanilla</strong>.</p>
-      <ul>
-        <li><strong>--c-brand:</strong> Cores oficiais da prefeitura definidas em escala (50 a 900).</li>
-        <li><strong>--f-display / --f-body:</strong> Separação entre fontes de leitura (Inter/Space Grotesk) e fontes de impacto (Archivo).</li>
-        <li><strong>Sombras:</strong> Variáveis como <code>--sh-1</code> a <code>--sh-3</code> para profundidade padronizada nos cards.</li>
-      </ul>
-
-      <!-- SECTION: AI -->
-      <h2 id="ai">4. O Papel da Inteligência Artificial (Pair Programming)</h2>
-      <p>A construção de um sistema desse porte, de forma ágil, foi impulsionada radicalmente pelo uso de agentes de Inteligência Artificial: o <strong>Claude Code</strong> e o agente de arquitetura <strong>Antigravity</strong>.</p>
-
-      <div class="step-grid">
-        <div class="step-card">
-          <div class="step-num">01</div>
-          <h4>Velocidade no Boilerplate</h4>
-          <p>A IA gerou a base de componentes (layout, sidebar, filtros e topbar) em minutos, aplicando as melhores práticas de componentes funcionais do React 19.</p>
-        </div>
-        <div class="step-card">
-          <div class="step-num">02</div>
-          <h4>Lógica Complexa do KNN</h4>
-          <p>A estruturação e implementação da regressão espacial usando Scikit-Learn foi desenhada inteiramente através de sessões interativas com a IA, garantindo escalabilidade térmica.</p>
-        </div>
-        <div class="step-card">
-          <div class="step-num">03</div>
-          <h4>Debugging Implacável</h4>
-          <p>Quando encontramos o erro do PapaParse ao ler os arquivos latinos de mais de 10MB, o Antigravity diagnosticou as regras de chunking e web-workers quase instantaneamente.</p>
-        </div>
+      <div class="business-value">
+        <strong>💸 Valor para o Negócio</strong>
+        Agilidade nas reuniões. Você pode simular cenários em tempo real: "Como estão as vendas apenas de casas, de alto padrão, construídas nos últimos 5 anos, no bairro Meireles?" — O painel responde instantaneamente.
       </div>
+    </div>
 
-      <p>Um exemplo prático do workflow humano-IA:</p>
-<pre><span class="cmnt"># Exemplo do Prompt passado para a IA no terminal de engenharia:</span>
-<span class="kw">"Implemente a página de análise espacial (PageEspacial.tsx)."</span>
-<span class="kw">"Ela deve ler os dados do FilterContext."</span>
-<span class="kw">"Deve utilizar o Recharts para gerar um Pareto da concentração de bairros."</span>
-<span class="kw">"As cores devem obedecer ao var(--c-brand)."</span>
-<span class="cmnt">-> A IA gera o código tipado, com animações framer-motion inseridas e pronto para review.</span>
-</pre>
-
-      <!-- SECTION: DEPLOY -->
-      <h2 id="deploy">5. Deploy e Pipeline de CI/CD</h2>
-      <p>Para garantir estabilidade, o projeto foi vinculado ao GitHub e o deploy contínuo configurado na Vercel.</p>
-
-<pre><span class="cmnt"># Compila o TypeScript de forma estrita para evitar erros no server</span>
-<span class="cmd">npx</span> tsc --noEmit
-
-<span class="cmnt"># Gera os arquivos minificados e chunks via Vite (Rollup)</span>
-<span class="cmd">npm</span> run build
-
-<span class="cmnt"># Adiciona, comita e aciona o trigger de webhooks do Vercel remotamente</span>
-<span class="cmd">git</span> add .
-<span class="cmd">git</span> commit -m <span class="str">"feat: masterização do dashboard e ETL"</span>
-<span class="cmd">git</span> push origin main
-</pre>
-
-      <div class="callout info">
-        <div class="callout-icon">🌐</div>
-        <div>
-          <div class="callout-title">O Processo na Nuvem</div>
-          <p>A Vercel identifica o evento de push no GitHub, faz o clone, executa o <code>npm install</code> e <code>npm run build</code>, e então distribui os arquivos estáticos (HTML/JS/CSS) e o nosso dataset otimizado (CSV) globalmente pela CDN. <strong>Latência zero para os usuários de Fortaleza.</strong></p>
-        </div>
+    <div class="concept-card">
+      <div class="concept-header">
+        <div class="concept-icon c-orange">🎯</div>
+        <h3 class="concept-title">A Regra de Pareto (O Gráfico 80/20)</h3>
       </div>
+      <p>Na "Análise Espacial", incluímos um Gráfico de Concentração de Pareto. O Princípio de Pareto diz que, geralmente, 80% dos resultados vêm de 20% das causas. Nosso sistema calcula automaticamente quais são os poucos bairros que, juntos, movimentam a maior fatia de dinheiro da cidade.</p>
+      
+      <div class="business-value">
+        <strong>💸 Valor para o Negócio</strong>
+        Foco estratégico. O diretor da imobiliária não precisa colocar corretores em 121 bairros diferentes. O painel aponta exatamente o seleto grupo de bairros onde está concentrado o dinheiro grosso.
+      </div>
+    </div>
 
-    </main>
-  </div>
+
+    <h2>5. Como a Inteligência Artificial acelerou tudo isso?</h2>
+    <p>Se a nossa equipe fosse programar tudo isso do zero de forma tradicional, levaria meses. Mas este projeto foi feito em conjunto com ferramentas de <strong>IA como Antigravity e Claude Code</strong> agindo como nossos co-pilotos de programação.</p>
+    
+    <ul>
+      <li><strong>Escrita Rápida:</strong> Pedíamos à IA: "Crie um gráfico de pizza para mostrar os Tipos de Uso", e ela escrevia toda a base de código visual.</li>
+      <li><strong>Caçadora de Erros:</strong> Quando um código falhava, a IA analisava a tela de erro e nos dizia na hora onde estava o defeito e como corrigir.</li>
+      <li><strong>Parceira Analítica:</strong> A IA sugeriu as cores do Design System, as melhores formas de animar a tela de abertura, e ajudou a escrever a complexa fórmula do KNN mencionada acima.</li>
+    </ul>
+
+    <h2>6. Resumo e Entrega (Deploy)</h2>
+    <p>Para fechar com chave de ouro, não hospedamos isso num servidor antigo e caro. Nós publicamos o sistema na <strong>Vercel</strong>, uma rede global (Cloud). Sempre que nossa equipe salva um arquivo novo, o sistema entra no ar para o mundo inteiro automaticamente em menos de um minuto, sem nunca sair do ar.</p>
+
+    <div style="text-align: center; margin-top: 60px;">
+      <a href="/" style="display: inline-block; background: var(--brand); color: white; padding: 16px 32px; border-radius: 99px; font-family: var(--font-title); font-weight: 800; font-size: 18px; box-shadow: 0 4px 12px rgba(241, 90, 34, 0.3);">
+        Acessar o Dashboard →
+      </a>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Dashboard ITBI Fortaleza · Feito com inteligência de negócios, dados abertos e IA.</p>
+  </footer>
 
 </body>
 </html>
