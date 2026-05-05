@@ -5,6 +5,8 @@ import { TipoUsoDonut } from '../charts/TipoUsoDonut'
 import { PadraoConstrutivo } from '../charts/PadraoConstrutivo'
 import { ScatterIdadeValor } from '../charts/ScatterIdadeValor'
 import { ZoneamentoChart } from '../charts/ZoneamentoChart'
+import { CorrelacaoTransacoes, type CorrelacaoPoint } from '../charts/CorrelacaoTransacoes'
+import { DataQualityPanel } from '../DataQualityPanel'
 
 const stagger: Variants = {
   hidden: {},
@@ -23,9 +25,17 @@ interface Props {
   padraoConstrutivo: { padrao: string; total: number }[]
   scatterData: { x: number; y: number; bairro: string }[]
   zoneamentoData: { zona: string; total: number; pct: number }[]
+  correlacaoBairros: CorrelacaoPoint[]
+  validationParams: {
+    totalRegistros: number
+    bairrosUnicos: number
+    registrosComValor: number
+    somaVlBaseCalculo: number
+    mediaVlBaseCalculo: number
+  }
 }
 
-export function PageMercado({ kpis, tipoUso, padraoConstrutivo, scatterData, zoneamentoData }: Props) {
+export function PageMercado({ kpis, tipoUso, padraoConstrutivo, scatterData, zoneamentoData, correlacaoBairros, validationParams }: Props) {
   return (
     <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -50,7 +60,11 @@ export function PageMercado({ kpis, tipoUso, padraoConstrutivo, scatterData, zon
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
         <div className="md:col-span-7">
-          <ChartCard title="Relação Idade × Valor/m²" subtitle="amostra de 2.000 transações" accentColor="#009889">
+          <ChartCard
+            title="Correlação: Idade × Valor/m²"
+            subtitle="Pearson r — linha de tendência linear"
+            accentColor="#009889"
+          >
             <ScatterIdadeValor data={scatterData} />
           </ChartCard>
         </div>
@@ -58,6 +72,21 @@ export function PageMercado({ kpis, tipoUso, padraoConstrutivo, scatterData, zon
           <ChartCard title="Zoneamento" subtitle="transações por zona urbana" accentColor="#00A0DC">
             <ZoneamentoChart data={zoneamentoData} />
           </ChartCard>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <div className="md:col-span-8">
+          <ChartCard
+            title="Correlação: Volume × Valor Médio por Bairro"
+            subtitle="Pearson r — bairros com ≥ 10 transações — linha de tendência linear"
+            accentColor="#325565"
+          >
+            <CorrelacaoTransacoes data={correlacaoBairros} />
+          </ChartCard>
+        </div>
+        <div className="md:col-span-4">
+          <DataQualityPanel {...validationParams} />
         </div>
       </div>
     </motion.div>

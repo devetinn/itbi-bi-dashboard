@@ -100,6 +100,8 @@ function Dashboard() {
                 padraoConstrutivo={data.padraoConstrutivo}
                 scatterData={data.scatterData}
                 zoneamentoData={data.zoneamentoData}
+                correlacaoBairros={data.correlacaoBairros}
+                validationParams={data.validationParams}
               />
             )}
             {activePage === 'explorer' && (

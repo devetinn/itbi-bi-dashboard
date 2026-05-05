@@ -16,3 +16,50 @@ export const DATA_GROUND_TRUTH = {
   // último documento registrado em 2026), NÃO o total de registros.
   observacao: 'num_dti=2187/2026 é o nº seq. do último doc. de 2026, não o total.',
 }
+
+export interface ValidationCheck {
+  campo: string
+  esperado: number | string
+  calculado: number | string
+  delta?: number  // diferença percentual, se numérico
+  ok: boolean
+}
+
+export interface ValidationResult {
+  checks: ValidationCheck[]
+  allPassed: boolean
+  score: number // 0–100
+  completenessRate: number // % de registros com vl_base_calculo
+}
+
+export function validateData(params: {
+  totalRegistros: number
+  bairrosUnicos: number
+  registrosComValor: number
+  somaVlBaseCalculo: number
+  mediaVlBaseCalculo: number
+}): ValidationResult {
+  const gt = DATA_GROUND_TRUTH
+  const TOL = 0.005 // 0,5% de tolerância
+
+  function numCheck(campo: string, esperado: number, calculado: number): ValidationCheck {
+    const delta = esperado !== 0 ? Math.abs((calculado - esperado) / esperado) : 0
+    return { campo, esperado, calculado, delta, ok: delta <= TOL }
+  }
+
+  const checks: ValidationCheck[] = [
+    numCheck('Total de Registros', gt.totalRegistros, params.totalRegistros),
+    numCheck('Bairros Únicos', gt.bairrosUnicos, params.bairrosUnicos),
+    numCheck('Registros c/ Valor', gt.registrosComValor, params.registrosComValor),
+    numCheck('Soma VL Base (R$)', gt.somaVlBaseCalculo, params.somaVlBaseCalculo),
+    numCheck('Média VL Base (R$)', gt.mediaVlBaseCalculo, params.mediaVlBaseCalculo),
+  ]
+
+  const passed = checks.filter((c) => c.ok).length
+  const score = Math.round((passed / checks.length) * 100)
+  const completenessRate = params.totalRegistros > 0
+    ? (params.registrosComValor / params.totalRegistros) * 100
+    : 0
+
+  return { checks, allPassed: passed === checks.length, score, completenessRate }
+}

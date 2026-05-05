@@ -234,6 +234,16 @@ export function useITBIData() {
     .sort((a, b) => b.size - a.size)
     .slice(0, 40)
 
+  // ── Correlação: volume de transações × valor médio por bairro ───────────
+  const correlacaoBairros = Object.entries(bairroMap)
+    .filter(([b, v]) => v.total >= 10 && m2Map[b])
+    .map(([bairro, v]) => ({
+      bairro,
+      totalTransacoes: v.total,
+      valorMedio: v.soma > 0 && v.total > 0 ? v.soma / v.total : 0,
+    }))
+    .filter((d) => d.valorMedio > 0)
+
   // ── Pareto bairros (todos, com % acumulado) ───────────────────────────────
   const totalPareto = Object.values(bairroMap).reduce((s, v) => s + v.total, 0)
   let accumPareto = 0
@@ -294,6 +304,7 @@ export function useITBIData() {
     padraoConstrutivo,
     sazonalidadeGrid,
     scatterData,
+    correlacaoBairros,
     treemapData,
     anoStats,
     zoneamentoData,
@@ -301,5 +312,12 @@ export function useITBIData() {
     paretoData,
     heatmapData,
     totalRegistros: formatCount(allData.length),
+    validationParams: {
+      totalRegistros: data.length,
+      bairrosUnicos: bairrosSet.size,
+      registrosComValor: dataComValor.length,
+      somaVlBaseCalculo: valorTotal,
+      mediaVlBaseCalculo: ticketMedio,
+    },
   }
 }

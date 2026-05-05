@@ -1,29 +1,38 @@
 import {
-  Scatter, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Legend, Line, ComposedChart,
+  ComposedChart, Scatter, Line, XAxis, YAxis,
+  CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts'
 import { formatBRL } from '../../utils/formatters'
 import { pearsonCorrelation, linearRegression, interpretCorrelation } from '../../utils/statistics'
 
-interface Props {
-  data: { x: number; y: number; bairro: string }[]
+export interface CorrelacaoPoint {
+  bairro: string
+  totalTransacoes: number
+  valorMedio: number
 }
 
-function CustomTooltip({ active, payload }: { active?: boolean; payload?: { payload: { x: number; y: number; bairro: string } }[] }) {
+interface Props {
+  data: CorrelacaoPoint[]
+}
+
+function CustomTooltip({ active, payload }: {
+  active?: boolean
+  payload?: { payload: CorrelacaoPoint }[]
+}) {
   if (!active || !payload?.length) return null
   const d = payload[0].payload
   return (
     <div className="bg-white border border-[#E8E6DF] rounded-xl p-3 text-xs shadow-sm">
       <div className="font-semibold text-[#1A1A1A]">{d.bairro}</div>
-      <div className="text-[#4A4A4A]">Idade: {d.x} anos</div>
-      <div className="text-[#4A4A4A]">Valor/m²: {formatBRL(d.y)}</div>
+      <div className="text-[#4A4A4A]">Transações: {d.totalTransacoes.toLocaleString('pt-BR')}</div>
+      <div className="text-[#4A4A4A]">Valor médio: {formatBRL(d.valorMedio)}</div>
     </div>
   )
 }
 
-export function ScatterIdadeValor({ data }: Props) {
-  const xs = data.map((d) => d.x)
-  const ys = data.map((d) => d.y)
+export function CorrelacaoTransacoes({ data }: Props) {
+  const xs = data.map((d) => d.totalTransacoes)
+  const ys = data.map((d) => d.valorMedio)
   const r = pearsonCorrelation(xs, ys)
   const { slope, intercept } = linearRegression(xs, ys)
   const interp = interpretCorrelation(r)
@@ -31,14 +40,9 @@ export function ScatterIdadeValor({ data }: Props) {
   const xMin = Math.min(...xs)
   const xMax = Math.max(...xs)
   const trendLine = [
-    { x: xMin, trend: slope * xMin + intercept },
-    { x: xMax, trend: slope * xMax + intercept },
+    { totalTransacoes: xMin, trend: slope * xMin + intercept },
+    { totalTransacoes: xMax, trend: slope * xMax + intercept },
   ]
-
-  // Merge scatter + trend para ComposedChart
-  const merged = data.map((d) => ({ ...d, trend: undefined as number | undefined }))
-  merged.push({ x: xMin, y: 0, bairro: '', trend: slope * xMin + intercept })
-  merged.push({ x: xMax, y: 0, bairro: '', trend: slope * xMax + intercept })
 
   return (
     <div className="space-y-1">
@@ -55,20 +59,20 @@ export function ScatterIdadeValor({ data }: Props) {
         <ComposedChart margin={{ top: 10, right: 20, left: 20, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#F0EFEA" />
           <XAxis
-            dataKey="x" type="number"
+            dataKey="totalTransacoes" type="number"
             tick={{ fontSize: 10, fill: '#8A8A8A' }} tickLine={false} axisLine={false}
-            label={{ value: 'Idade do Imóvel (anos)', position: 'insideBottom', offset: -2, fontSize: 10, fill: '#8A8A8A' }}
+            label={{ value: 'Volume de Transações', position: 'insideBottom', offset: -2, fontSize: 10, fill: '#8A8A8A' }}
           />
           <YAxis
-            dataKey="y" type="number"
+            dataKey="valorMedio" type="number"
             tick={{ fontSize: 10, fill: '#8A8A8A' }} tickLine={false} axisLine={false}
             tickFormatter={(v) => formatBRL(v)}
-            label={{ value: 'Valor/m²', angle: -90, position: 'insideLeft', offset: 15, fontSize: 10, fill: '#8A8A8A' }}
+            label={{ value: 'Valor Médio (R$)', angle: -90, position: 'insideLeft', offset: 15, fontSize: 10, fill: '#8A8A8A' }}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
 
-          <Scatter data={data} name="Transação" fill="#4A7C6F" fillOpacity={0.5} r={3} />
+          <Scatter data={data} name="Bairro" fill="#325565" fillOpacity={0.6} r={4} />
 
           <Line
             data={trendLine} dataKey="trend" name="Linha de tendência"
